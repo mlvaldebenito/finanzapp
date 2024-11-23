@@ -8,6 +8,7 @@ import WarningIcon from '@mui/icons-material/Warning';
 import getSpeedometerMessage from '../helpers/speedometerMessages';
 import { useQuery } from '@apollo/client';
 import { GET_ALL_BANK_MOVEMENTS } from '../graphql/querys';
+import LogoutButton from '../components/LogoutButton';
 
 
 const MainView = () => {
@@ -16,7 +17,6 @@ const MainView = () => {
 
   const { data  } = useQuery(GET_ALL_BANK_MOVEMENTS);
   const transactions = data?.allBankMovements || [];
-  console.log(transactions);
   
 
 
@@ -55,6 +55,7 @@ const MainView = () => {
       backdropFilter: 'blur(8px)',
       border: '1px solid rgba(255, 255, 255, 0.1)',
     }}>
+      <LogoutButton />
       <Box
           sx={{
             maxWidth: '4xl',

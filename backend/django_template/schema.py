@@ -2,6 +2,13 @@ import graphene
 from django.contrib.auth.models import User
 from graphene_django.types import DjangoObjectType
 import graphql_jwt
+from django.contrib.auth import get_user_model
+import jwt
+from django.contrib.auth.models import AnonymousUser
+from django.conf import settings
+from graphql import GraphQLError
+
+from django_template.middleware import get_user
 
 # Import types and models for your queries
 from apps.app_schema.types import (
@@ -79,15 +86,21 @@ class Query(graphene.ObjectType):
             return user
         return None
 
-    def resolve_all_bank_movements(root, info):
-        user = info.context.user
-        return BankMovement.objects.filter(bank_account__user=user)
-
     def resolve_bank_movement(root, info, id):
         try:
             return BankMovement.objects.get(pk=id)
         except BankMovement.DoesNotExist:
             return None
+
+    def resolve_all_bank_movements(root, info):
+        auth_user = get_user(info.context)
+        user = info.context.user
+        print("user", user)
+        print("auth_user", auth_user)
+        if auth_user.is_anonymous:
+            return BankMovement.objects.none()
+
+        return BankMovement.objects.all()
 
     # Resolvers for BankAccount
     def resolve_all_bank_accounts(root, info):
