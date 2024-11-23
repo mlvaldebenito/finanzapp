@@ -9,11 +9,17 @@ import getSpeedometerMessage from "../helpers/speedometerMessages";
 import { useQuery } from "@apollo/client";
 import { GET_ALL_BANK_MOVEMENTS } from "../graphql/querys";
 import LogoutButton from "../components/LogoutButton";
+import useGetUser from "../hooks/useGetUser";
+import { useNavigate } from "react-router-dom";
+
 
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
 
   const { data } = useQuery(GET_ALL_BANK_MOVEMENTS);
+  const user = useGetUser()
+  const navigate = useNavigate();
+  if (!user?.hasBankCredentials) return navigate('/register-credentials');
   const transactions = data?.allBankMovements || [];
   const incomeTransactions = transactions.filter((mov) => mov.amount > 0);
 

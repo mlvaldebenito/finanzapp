@@ -6,11 +6,9 @@ import Login from './views/Login';
 import PrivateRoute from './components/PrivateRoute'; // Protect routes
 import PublicRoute from './components/PublicRoute'; // Redirect logged-in users
 import RegisterCredentials from './views/RegisterCredentials';
-import useGetUser from './hooks/useGetUser';
 
 
 function AppRoutes() {
-  const user = useGetUser()
   return (
       <Router>
         <Routes>
@@ -30,17 +28,13 @@ function AppRoutes() {
             path="/main"
             element={
               <PrivateRoute>
-                {user?.hasBankCredentials ? <MainView /> : <RegisterCredentials />}
+                <MainView />
               </PrivateRoute>
             }
           />
           <Route
             path="/register-credentials"
-            element={
-              <PrivateRoute>
-                <RegisterCredentials />
-              </PrivateRoute>
-            }
+            element={<RegisterCredentials />}
           />
         </Routes>
       </Router>

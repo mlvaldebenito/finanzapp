@@ -17,19 +17,24 @@ import {
   Lock,
   Person,
 } from '@mui/icons-material';
+import { GET_USER } from '../graphql/querys';
 import { REGISTER_BANK_CREDENTIALS } from '../graphql/mutations';
 import { useMutation } from '@apollo/client';
 import { prettifyRut, removeSeparators } from 'react-rut-formatter';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterCredentials = () => {
   const [rut, setRut] = useState({ formatted: '', raw: '', valid: false });
   const [password, setPassword] = useState('')
+  const navigate = useNavigate();
 
 
   const [handleSubmit, {loading}] = useMutation(REGISTER_BANK_CREDENTIALS, {
     variables: {
       rut: rut.raw, password
     },
+    refetchQueries: [GET_USER],
+    onCompleted: () => navigate('/main'),
   })
 
   const handleRutChange = (
