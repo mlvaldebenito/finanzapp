@@ -25,12 +25,12 @@ const TransactionTable = ({
     field: 'amount',
     headerName: 'Amount',
     width: 130,
-    valueFormatter: (params) => {
-      if (params == null) return '-';
-      return new Intl.NumberFormat('en-US', {
+    renderCell: ({row}) => {
+      const formatted = Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
-      }).format(params);
+      }).format(row.amount);
+      return <Typography sx={{color: (row.amount< 0 ? 'red': 'green')}}>{formatted}</Typography>
     },
   },
     { 
