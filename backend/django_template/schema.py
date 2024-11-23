@@ -11,6 +11,7 @@ from apps.models import (
     BankingCredentials,
     UserDetail,
 )
+from apps.helpers import retrieve_national_identifier_from_description
 
 
 class Query(graphene.ObjectType):
@@ -18,8 +19,15 @@ class Query(graphene.ObjectType):
     hello = graphene.String(default_value="Hello, World!")
 
     # Queries for BankMovement
-    all_bank_movements = graphene.List(BankMovementType)
+    all_bank_movements = graphene.List(
+        BankMovementType,
+        start_date=graphene.Date(),
+        end_date=graphene.Date(),
+
+    )
     bank_movement = graphene.Field(BankMovementType, id=graphene.Int())
+
+    distinct_ruts_count = graphene.Int(start_date=graphene.Date(), end_date=graphene.Date())
 
     # Queries for BankAccount
     all_bank_accounts = graphene.List(BankAccountType)
@@ -34,9 +42,28 @@ class Query(graphene.ObjectType):
     user_detail = graphene.Field(UserDetailType, id=graphene.Int())
 
     # Resolvers for BankMovement
-    def resolve_all_bank_movements(root, info):
-        return BankMovement.objects.all()
+    def resolve_all_bank_movements(root, info, start_date=None, end_date=None, distinct_ruts=False):
+        queryset = BankMovement.objects.filter(amount__gt=0)
+        if start_date:
+            queryset = queryset.filter(accounting_date__gte=start_date)
+        if end_date:
+            queryset = queryset.filter(accounting_date__lte=end_date)
+        return queryset
 
+    def resolve_distinct_ruts_count(root, info, start_date=None, end_date=None):
+        queryset = BankMovement.objects.filter(amount__gt=0)
+        if start_date:
+            queryset = queryset.filter(accounting_date__gte=start_date)
+        if end_date:
+            queryset = queryset.filter(accounting_date__lte=end_date)
+        
+        observations = list(queryset.values_list('observation', flat=True))
+        national_identifiers = [
+            identifier.rut for obs in observations
+            if (identifier := retrieve_national_identifier_from_description(obs)) is not None
+        ]
+        return len(set(national_identifiers[0]))
+    
     def resolve_bank_movement(root, info, id):
         try:
             return BankMovement.objects.get(pk=id)

@@ -11,7 +11,6 @@ class BankMovementType(DjangoObjectType):
     class Meta:
         model = BankMovement
 
-
 class BankAccountType(DjangoObjectType):
     class Meta:
         model = BankAccount
