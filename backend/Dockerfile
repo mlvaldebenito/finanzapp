@@ -11,6 +11,4 @@ COPY poetry_conditional.sh ./
 RUN chmod +x poetry_conditional.sh && pip install --upgrade pip && pip install poetry==1.4.2 && poetry config virtualenvs.create false
 COPY pyproject.toml poetry.lock ./
 RUN ./poetry_conditional.sh
-COPY django_template .
-COPY apps .
 COPY . .
