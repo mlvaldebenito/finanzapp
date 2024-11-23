@@ -19,6 +19,14 @@ class BankMovement(BaseModel):
     amount = models.IntegerField()
     bank_account = models.ForeignKey("apps.BankAccount", on_delete=models.PROTECT)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["bank_account", "movement_number"],
+                name="unique_bank_account_movement_number",
+            )
+        ]
+
 
 class UserDetail(BaseModel):
     user = models.OneToOneField(get_user_model(), on_delete=models.PROTECT, related_name="user_detail")
