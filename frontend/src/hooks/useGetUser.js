@@ -13,7 +13,7 @@ const useGetUser = (onCompleted = () => {}) => {
     if (!error && isLogged && !loading && !data?.getUser) {
       refetch();
     }
-  }, [loading, isLogged, data]);
+  }, [loading, isLogged, data, error, refetch]);
   return data?.getUser;
 };
 

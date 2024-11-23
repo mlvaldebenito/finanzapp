@@ -14,7 +14,7 @@ const activities = [
 
 function OnboardingFlow() {
   const [step, setStep] = useState(0);
-  const [startedActivities, setStartedActivities] = useState(null);
+  const [, setStartedActivities] = useState(null);
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [credentials, setCredentials] = useState({ sii: "", bank: "" });
 
