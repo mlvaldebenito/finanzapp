@@ -145,15 +145,12 @@ class SantanderScraper:
         return response.json()
 
     @classmethod
-    def parse_movements(cls, json_response, account_number):
-        print(json_response)
+    def parse_movements(cls, json_response: dict, account_number, user):
         bank_account, _ = BankAccount.objects.get_or_create(
-            account_number=account_number, bank="Santander"
+            account_number=account_number, bank="Santander", user=user,
         )
-        try:
-            movements = json_response["movements"]
-        except KeyError:
-            return []
+        if not json_response.get("movements"):
+            return
         return [
             BankMovement(
                 accounting_date=mov["accountingDate"],
@@ -184,6 +181,7 @@ class SantanderClient:
             jwt_token, banking_credentials.user.user_detail.rut
         )
         to_create = []
+        user = banking_credentials.user
         for account_detail in client_accounts:
             account_number = (
                 f"{account_detail['OFICINACONTRATO']}{account_detail['NUMEROCONTRATO']}"
@@ -191,8 +189,5 @@ class SantanderClient:
             response = SantanderScraper.fetch_bank_movements(
                 access_token, account_number
             )
-            to_create += SantanderScraper.parse_movements(response, account_number)
+            to_create += SantanderScraper.parse_movements(response, account_number, user)
         BankMovement.objects.bulk_create(to_create, ignore_conflicts=True)
-
-
-"scope=Completa&username=0019640161K&password=Rai.xxxx&client_id=4e9af62c-6563-42cd-aab6-0dd7d50a9131"
