@@ -10,7 +10,6 @@ function App() {
       <Routes>
         <Route path="/" element={<MyNewView />} />
         <Route path="/about" element={<MainView />} />
-        {/* Add more routes here */}
         <Route path="/onboarding" element={<OnBoardingView />} />
       </Routes>
     </Router>
