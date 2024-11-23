@@ -12,7 +12,7 @@ superuser:
 	$(DOCKER_EXEC) $(MANAGE_PY) createsuperuser
 
 shell:
-	$(DOCKER_EXEC) $(MANAGE_PY) shell_plus
+	$(DOCKER_EXEC) $(MANAGE_PY) shell
 
 shell_plus:
 	$(DOCKER_EXEC) $(MANAGE_PY) shell_plus --notebook
