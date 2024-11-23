@@ -7,6 +7,7 @@ import jwt
 from django.contrib.auth.models import AnonymousUser
 from django.conf import settings
 from graphql import GraphQLError
+from apps.models import BankingCredentials
 
 from django_template.middleware import get_user
 
@@ -31,6 +32,10 @@ class UserType(DjangoObjectType):
         model = User
         fields = ("id", "username", "email")
 
+class BankingCredentialsType(DjangoObjectType):
+    class Meta:
+        model = BankingCredentials
+
 
 # Define Mutation for Registering a User
 class RegisterUser(graphene.Mutation):
@@ -46,14 +51,14 @@ class RegisterUser(graphene.Mutation):
     
 
 class RegisterBankCredentials(graphene.Mutation):
-    bank_credentials = graphene.Field()
+    bank_credentials = graphene.Field(BankingCredentialsType)
 
     class Arguments:
         rut = graphene.String(required=True)
         password = graphene.String(required=True)
 
     def mutate(self, info, rut, password):
-        pass
+        return BankingCredentials.objects.create(user=info.user, rut=rut, password=password, bank="Santander")
 
 
 # Define the Mutation class
