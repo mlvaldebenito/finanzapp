@@ -116,18 +116,30 @@ class SantanderScraper:
             headers=headers,
             json=json_data,
         )
-        return cls.parse_movements(response)
+        return response.json()
     
     @classmethod
-    def parse_movements(cls, response):
+    def parse_movements(cls, response, bank_account):
         json_response = response.json()
         movements = json_response["movements"]
         return [
             BankMovement(
-                
+                accounting_date=mov["accountingDate"],
+                transaction_date=mov["transactionDate"],
+                observation=mov["observation"],
+                expanded_code=mov["expandedCode"],
+                movement_number=mov["movementNumber"],
+                amount=cls.parse_amount(mov["movementAmount"]),
+                bank_account=bank_account,
             )
             for mov in movements
         ]
+    
+    @classmethod
+    def parse_amount(cls, amount: str):
+        if amount[-1] == "-":
+            return -int((int(amount[:-1])/100))
+        return int((int(amount)/100))
 
 
 
@@ -139,7 +151,7 @@ class SantanderClient:
         client_accounts = SantanderScraper.fetch_bank_accounts(jwt_token, banking_credentials.user.user_detail.rut)
         to_create = []
         for account in client_accounts:
-            fetched = SantanderScraper.fetch_bank_movements(access_token, account)
+            response = SantanderScraper.fetch_bank_movements(access_token, account)
+            fetched = SantanderScraper.parse_movements(response)
             to_create.append(fetched)
-
         BankMovement.objects.bulk_create(to_create, ignore_conflicts=True)
