@@ -17,21 +17,20 @@ import {
   Lock,
   Person,
 } from '@mui/icons-material';
+import { REGISTER_BANK_CREDENTIALS } from '../graphql/mutations';
+import { useMutation } from '@apollo/client';
 import { prettifyRut, removeSeparators } from 'react-rut-formatter';
 
 const RegisterCredentials = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const [rut, setRut] = useState({ formatted: '', raw: '', valid: false });
   const [password, setPassword] = useState('')
 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsLoading(false);
-  };
+  const [handleSubmit, {loading}] = useMutation(REGISTER_BANK_CREDENTIALS, {
+    variables: {
+      rut: rut.raw, password
+    },
+  })
 
   const handleRutChange = (
     (e) => {
@@ -123,7 +122,8 @@ const RegisterCredentials = () => {
                   type="submit"
                   variant="contained"
                   size="large"
-                  disabled={isLoading || password === '' || rut.raw === ''}
+                  onClick={handleSubmit}
+                  disabled={loading || password === '' || rut.raw === ''}
                   sx={{
                     mt: 1,
                     py: 1.5,
@@ -134,7 +134,7 @@ const RegisterCredentials = () => {
                     borderRadius: 8,
                   }}
                 >
-                  {isLoading ? (
+                  {loading ? (
                     <>
                       <CircularProgress size={24} sx={{ mr: 1 }} color="inherit" />
                       Procesando...

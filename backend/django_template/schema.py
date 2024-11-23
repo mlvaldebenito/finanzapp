@@ -58,7 +58,7 @@ class RegisterBankCredentials(graphene.Mutation):
         password = graphene.String(required=True)
 
     def mutate(self, info, rut, password):
-        return BankingCredentials.objects.create(user=info.user, rut=rut, password=password, bank="Santander")
+        return BankingCredentials.objects.create(user=info.context.user, rut=rut, password=password, bank="Santander")
 
 
 # Define the Mutation class
