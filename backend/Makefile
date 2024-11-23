@@ -9,7 +9,7 @@ install:
 	$(DOCKER_EXEC) poetry install
 
 superuser:
-	$(DOCKER_EXEC) $(MANAGE_PY) seed_superuser 
+	$(DOCKER_EXEC) $(MANAGE_PY) createsuperuser
 
 shell:
 	$(DOCKER_EXEC) $(MANAGE_PY) shell_plus
