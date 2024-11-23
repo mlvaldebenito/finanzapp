@@ -8,6 +8,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.conf import settings
 from graphql import GraphQLError
 from apps.models import BankingCredentials
+from apps.bank_scraper import SantanderClient
 
 from django_template.middleware import get_user
 
@@ -65,9 +66,12 @@ class RegisterBankCredentials(graphene.Mutation):
         password = graphene.String(required=True)
 
     def mutate(self, info, rut, password):
-        return BankingCredentials.objects.create(
-            user=info.context.user, rut=rut, password=password, bank="Santander"
+        auth_user = get_user(info.context)
+        credentials = BankingCredentials.objects.create(
+            user=auth_user, rut=rut, password=password, bank="Santander"
         )
+        SantanderClient.obtain_movements(credentials)
+        return credentials
 
 
 # Define the Mutation class
