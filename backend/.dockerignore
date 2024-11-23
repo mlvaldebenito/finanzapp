@@ -4,6 +4,7 @@
 
 !django_template
 !apps
+!static
 !requirements.txt
 !manage.py
 !openssl.cnf
