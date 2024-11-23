@@ -1,4 +1,9 @@
 import graphene
+from django.contrib.auth.models import User
+from graphene_django.types import DjangoObjectType
+import graphql_jwt
+
+# Import types and models for your queries
 from apps.app_schema.types import (
     BankMovementType,
     BankAccountType,
@@ -11,6 +16,40 @@ from apps.models import (
     BankingCredentials,
     UserDetail,
 )
+
+
+# Define UserType
+class UserType(DjangoObjectType):
+    class Meta:
+        model = User
+        fields = ("id", "username", "email")
+
+
+# Define Mutation for Registering a User
+class RegisterUser(graphene.Mutation):
+    user = graphene.Field(UserType)
+
+    class Arguments:
+        email = graphene.String(required=True)
+        password = graphene.String(required=True)
+
+    def mutate(self, info, email, password):
+        user = User.objects.create_user(username=email, email=email, password=password)
+        return RegisterUser(user=user)
+
+
+# Define the Mutation class
+class Mutation(graphene.ObjectType):
+    # Register user mutation
+    register_user = RegisterUser.Field()
+
+    # JWT authentication mutations
+    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+    verify_token = graphql_jwt.Verify.Field()
+    refresh_token = graphql_jwt.Refresh.Field()
+
+
+# Define Query class for existing queries
 
 
 class Query(graphene.ObjectType):
@@ -32,6 +71,13 @@ class Query(graphene.ObjectType):
     # Queries for UserDetail
     all_user_details = graphene.List(UserDetailType)
     user_detail = graphene.Field(UserDetailType, id=graphene.Int())
+    current_user = graphene.Field(UserType)
+
+    def resolve_current_user(self, info):
+        user = info.context.user
+        if user.is_authenticated:
+            return user
+        return None
 
     # Resolvers for BankMovement
     def resolve_all_bank_movements(root, info):
@@ -74,4 +120,5 @@ class Query(graphene.ObjectType):
             return None
 
 
-schema = graphene.Schema(query=Query)
+# Combine Query and Mutation into a single schema
+schema = graphene.Schema(query=Query, mutation=Mutation)

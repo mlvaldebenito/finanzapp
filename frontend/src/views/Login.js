@@ -16,6 +16,8 @@ import {
   Person,
   PersonAdd,
 } from '@mui/icons-material';
+import { useMutation } from '@apollo/client';
+import { REGISTER_USER } from '../graphql/mutations'; // Adjust the path to your mutation
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -36,6 +38,11 @@ function TabPanel(props) {
 const Login = () => {
   const [tab, setTab] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [registerUser] = useMutation(REGISTER_USER);
 
   const handleTabChange = (_, newValue) => {
     setTab(newValue);
@@ -43,10 +50,30 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (tab === 1 && password !== confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsLoading(false);
+
+    try {
+      if (tab === 1) {
+        // Register a new user
+        const { data } = await registerUser({
+          variables: { email, password },
+        });
+        alert(`Account created for ${data.registerUser.user.email}`);
+      } else {
+        // Handle login logic here
+        alert('Logged in successfully!');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('An error occurred!');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -100,6 +127,8 @@ const Login = () => {
                   fullWidth
                   label="Email"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -113,6 +142,8 @@ const Login = () => {
                   fullWidth
                   label="Contraseña"
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -159,6 +190,8 @@ const Login = () => {
                   fullWidth
                   label="Email"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -172,6 +205,8 @@ const Login = () => {
                   fullWidth
                   label="Contraseña"
                   type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -185,6 +220,8 @@ const Login = () => {
                   fullWidth
                   label="Confirmar Contraseña"
                   type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -226,6 +263,6 @@ const Login = () => {
       </Container>
     </Box>
   );
-}
+};
 
 export default Login;
