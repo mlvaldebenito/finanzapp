@@ -6,7 +6,9 @@ import OnBoardingView from './views/OnBoardingView';
 import Login from './views/Login';
 import PrivateRoute from './components/PrivateRoute'; // Protect routes
 import PublicRoute from './components/PublicRoute'; // Redirect logged-in users
-import { ApolloProvider } from '@apollo/client';
+import RegisterCredentials from './views/RegisterCredentials';
+
+import {  ApolloProvider } from '@apollo/client';
 import client from './apollo/client';
 
 function App() {
@@ -34,6 +36,7 @@ function App() {
             }
           />
           <Route path="/onboarding" element={<OnBoardingView />} />
+          <Route path='/register-credentials' element={<RegisterCredentials />} />
         </Routes>
       </Router>
     </ApolloProvider>
