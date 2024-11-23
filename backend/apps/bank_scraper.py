@@ -3,7 +3,7 @@ import requests
 class SantanderScraper:
     @classmethod
     def fetch_login_tokens(cls, banking_credentials):
-        data = f'scope=Completa&username=00{banking_credentials.user.rut}&password={banking_credentials.password}&client_id=4e9af62c-6563-42cd-aab6-0dd7d50a9131'
+        data = f'scope=Completa&username=00{banking_credentials.user.user_detail.rut}&password={banking_credentials.password}&client_id=4e9af62c-6563-42cd-aab6-0dd7d50a9131'
         headers = {
             'Accept': 'application/json',
             'Accept-Language': 'es-419,es;q=0.9',
@@ -115,3 +115,12 @@ class SantanderScraper:
             json=json_data,
         )
         return response.json()
+
+
+class SantanderClient:
+    @classmethod
+    def obtain_movements(cls, banking_credentials):
+        access_token, jwt_token = SantanderScraper.fetch_login_tokens(banking_credentials)
+        client_accounts = SantanderScraper.fetch_bank_accounts(jwt_token, banking_credentials.user.user_detail.rut)
+        for account in client_accounts:
+            SantanderScraper.fetch_bank_movements(access_token, account)
