@@ -1,7 +1,12 @@
+import os
+
 from django.contrib import admin
 
 # Register your models here.
 from django.contrib.auth import get_user_model
+from django.contrib.admin.helpers import ActionForm
+from django.forms import CharField
+
 from apps.models import (
     UserDetail,
     BankAccount,
@@ -9,8 +14,10 @@ from apps.models import (
     BankMovement,
 )  # Replace 'apps' with your actual app name
 
-# Get the custom User model
+from .bedrock_chat import BedRockLLM
 
+class ExtraParam(ActionForm):
+    query = CharField(required=False)
 
 # Extend the User admin interface to display related UserDetail information
 class UserDetailInline(admin.StackedInline):
@@ -34,6 +41,7 @@ class CustomUserAdmin(admin.ModelAdmin):
     get_rut.short_description = "RUT"
 
 
+
 # Register the UserDetail model (optional, if you want to manage it directly)
 @admin.register(UserDetail)
 class UserDetailAdmin(admin.ModelAdmin):
@@ -45,7 +53,42 @@ class UserDetailAdmin(admin.ModelAdmin):
 class BankAccountAdmin(admin.ModelAdmin):
     list_display = ("bank", "account_number")
     search_fields = ("bank", "account_number")
+    action_form = ExtraParam
+    actions = [
+        "chat_with_bedrock",
+    ]
 
+    @admin.action(description="Chat con BedRock")
+    def chat_with_bedrock(self, request, queryset):
+        query=request.POST["query"]
+        
+        # Crear instancia de BedRock (usando el rol IAM)
+        llm = BedRockLLM(
+            model_id="anthropic.claude-v2",
+            temperature=0.7,
+            max_tokens=500
+        )
+        
+        try:
+            # Ver modelos disponibles
+            print("Modelos disponibles:", llm.get_available_models())
+            
+            # Hacer una pregunta
+            prompt = "¿Cuáles son los principios básicos de la programación orientada a objetos?"
+            respuesta = llm.chat(prompt)
+            print("\nRespuesta:", respuesta)
+            
+            # Hacer otra pregunta relacionada
+            prompt_2 = "Dame un ejemplo de herencia en Python"
+            respuesta_2 = llm.chat(prompt_2)
+            print("\nRespuesta 2:", respuesta_2)
+            
+            # Ver el historial
+            print("\nHistorial:", llm.get_conversation_history())
+            
+        except Exception as e:
+            print(f"Ocurrió un error: {str(e)}")
+        
 
 @admin.register(BankingCredentials)
 class BankingCredentialsAdmin(admin.ModelAdmin):
@@ -67,3 +110,5 @@ class BankMovementAdmin(admin.ModelAdmin):
     search_fields = ("observation", "expanded_code")
     list_filter = ("accounting_date", "transaction_date", "bank_account")
     date_hierarchy = "accounting_date"
+
+
