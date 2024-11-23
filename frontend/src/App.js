@@ -9,7 +9,7 @@ import {  ApolloProvider } from '@apollo/client';
 import client from './apollo/client';
 
 function App() {
-  console.log('REACT_APP_GRAPHQL_URI', process.env.REACT_APP_BACKEND_URI)
+  console.log('REACT_APP_BACKEND_URI', process.env.REACT_APP_BACKEND_URI)
   return (
     <ApolloProvider client={client}>
     <Router>

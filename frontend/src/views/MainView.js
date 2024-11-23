@@ -7,22 +7,39 @@ import SpeedometerGauge from '../components/speedometerGauge';
 import WarningIcon from '@mui/icons-material/Warning';
 import getSpeedometerMessage from '../helpers/speedometerMessages';
 import { useQuery } from '@apollo/client';
-import { GET_ALL_BANK_MOVEMENTS } from '../graphql/querys';
+import { GET_ALL_BANK_MOVEMENTS, GET_DISTINCT_RUTS_COUNT } from '../graphql/queries';
+import TermometerLoader from '../components/termometerLoader';
 
 
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
 
   // Query for all bank movements
-  const { data } = useQuery(GET_ALL_BANK_MOVEMENTS);
+  const { data, loading: allBankMovementsLoading } = useQuery(GET_ALL_BANK_MOVEMENTS, {
+    variables: {
+      startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10), // 30 days ago
+      endDate: new Date().toISOString().slice(0, 10) // today
+    }
+  });
+
+  const { data: distinctRutsData } = useQuery(GET_DISTINCT_RUTS_COUNT, {
+    variables: {
+      startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10), // 30 days ago
+      endDate: new Date().toISOString().slice(0, 10) // today
+    }
+  });
+
+  const { data: sixMonthsDistinctRuts } = useQuery(GET_DISTINCT_RUTS_COUNT, {
+    variables: {
+      startDate: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10), // 6 months ago
+      endDate: new Date().toISOString().slice(0, 10) // today
+    }
+  });
+
+  console.log("DISTINCT RUTS DATA: ", distinctRutsData);
+  console.log("SIX MONTHS DISTINCT RUTS DATA: ", sixMonthsDistinctRuts);
   const transactions = data?.allBankMovements || [];
   const incomeTransactions = transactions.filter((mov) => mov.amount > 0);
-
-  console.log(transactions);
-  
-
-
-
 
   // Calculate metrics
   const totalTransactions = transactions?.length || '';
@@ -70,17 +87,17 @@ const MainView = () => {
             borderColor: 'grey.800',
           }}
         >
-          <SpeedometerGauge value={incomeTransactions?.length ?? 0} maxValue={50} />
+          <SpeedometerGauge value={distinctRutsData?.distinctRutsCount ?? 0} maxValue={50} />
           <Box sx={{ textAlign: 'center', mt: 3 }}>
             <Typography 
               variant="h6" 
               sx={{ 
                 color: '#475569',
-                fontSize: '1.125rem'
+                fontSize: '1.125rem'  
               }}
             >
               {/* TODO: Add logic for calculating transactions when queries are ready */}
-              Ingresos de transferencias de personas distintas: {incomeTransactions?.length ?? 0}
+              Ingresos de transferencias de personas distintas: {distinctRutsData?.distinctRutsCount ?? 0}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
@@ -140,11 +157,15 @@ const MainView = () => {
           border: '1px solid rgba(255, 255, 255, 0.18)',
           borderRadius: '4px',
         }}
-      >
+      >{!allBankMovementsLoading ? (        
         <TransactionTable
           transactions={transactions}
           onSelectionChange={setSelectedTransactions}
-        />
+          />
+        ) : (
+          <TermometerLoader />
+        )
+      }
       </Paper>
       <Grid 
         container
@@ -173,7 +194,7 @@ const MainView = () => {
             color="#3b82f6"
             subtitle={<Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Typography variant="caption" sx={{ color: '#10b981', fontSize: '0.7rem', fontWeight: 600 }}>
-                Estas a {50 - totalTransactions} transacciones de ser tributado.
+                Estas a {50 - distinctRutsData?.getDistinctRutsCount} transacciones de ser tributado.
               </Typography>
             </Box>}
           />

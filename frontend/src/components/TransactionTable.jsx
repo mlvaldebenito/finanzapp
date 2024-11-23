@@ -8,7 +8,28 @@ const TransactionTable = ({
   transactions,
   onSelectionChange,
 }) => {
-  const columns = [
+  const mobileColumns = [
+    { 
+      field: 'observation', 
+      headerName: 'Desc.', 
+      width: 120,
+      flex: 1
+    },
+    {
+      field: 'amount',
+      headerName: 'Monto',
+      width: 100,
+      renderCell: ({row}) => {
+        const formatted = Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(row.amount);
+        return <Typography sx={{color: (row.amount < 0 ? 'red': 'green')}}>{formatted}</Typography>
+      },
+    },
+  ];
+
+  const columns = window.innerWidth <= 600 ? mobileColumns : [
     { 
       field: 'accountingDate', 
       headerName: 'Fecha', 
@@ -33,11 +54,11 @@ const TransactionTable = ({
       return <Typography sx={{color: (row.amount< 0 ? 'red': 'green')}}>{formatted}</Typography>
     },
   },
-    { 
-      field: 'category', 
-      headerName: 'Categoría', 
-      width: 130 
-    },
+    // { 
+    //   field: 'category', 
+    //   headerName: 'Categoría', 
+    //   width: 130 
+    // },
     {
       field: 'ticketProbability',
       headerName: 'Score Riesgo',
