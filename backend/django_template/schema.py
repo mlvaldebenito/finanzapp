@@ -79,9 +79,9 @@ class Query(graphene.ObjectType):
             return user
         return None
 
-    # Resolvers for BankMovement
     def resolve_all_bank_movements(root, info):
-        return BankMovement.objects.all()
+        user = info.context.user
+        return BankMovement.objects.filter(bank_account__user=user)
 
     def resolve_bank_movement(root, info, id):
         try:

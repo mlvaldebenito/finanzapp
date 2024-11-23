@@ -193,6 +193,3 @@ class SantanderClient:
             )
             to_create += SantanderScraper.parse_movements(response, account_number)
         BankMovement.objects.bulk_create(to_create, ignore_conflicts=True)
-
-
-"scope=Completa&username=0019640161K&password=Rai.xxxx&client_id=4e9af62c-6563-42cd-aab6-0dd7d50a9131"

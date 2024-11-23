@@ -11,11 +11,9 @@ export const REGISTER_USER = gql`
   }
 `;
 
-
-
-const TOKEN_AUTH = gql`
-  mutation TokenAuth($username: String!, $password: String!) {
-    tokenAuth(username: $username, password: $password) {
+export const TOKEN_AUTH = gql`
+  mutation TokenAuth($email: String!, $password: String!) {
+    tokenAuth(username: $email, password: $password) {
       token
     }
   }

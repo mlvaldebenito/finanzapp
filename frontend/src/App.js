@@ -4,23 +4,38 @@ import MyNewView from './views/MyNewView';
 import MainView from './views/MainView';
 import OnBoardingView from './views/OnBoardingView';
 import Login from './views/Login';
-
-import {  ApolloProvider } from '@apollo/client';
+import PrivateRoute from './components/PrivateRoute'; // Protect routes
+import PublicRoute from './components/PublicRoute'; // Redirect logged-in users
+import { ApolloProvider } from '@apollo/client';
 import client from './apollo/client';
 
 function App() {
-  console.log('REACT_APP_GRAPHQL_URI', process.env.REACT_APP_BACKEND_URI)
+  console.log('REACT_APP_GRAPHQL_URI', process.env.REACT_APP_BACKEND_URI);
+
   return (
     <ApolloProvider client={client}>
-    <Router>
-      <Routes>
-        <Route path="/" element={<MyNewView />} />
-        <Route path="/main" element={<MainView />} />
-        <Route path="/login" element={<Login />} />
-        {/* Add more routes here */}
-        <Route path="/onboarding" element={<OnBoardingView />} />
-      </Routes>
-    </Router>
+      <Router>
+        <Routes>
+          <Route path="/" element={<MyNewView />} />
+          <Route
+            path="/main"
+            element={
+              <PrivateRoute>
+                <MainView />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
+          <Route path="/onboarding" element={<OnBoardingView />} />
+        </Routes>
+      </Router>
     </ApolloProvider>
   );
 }

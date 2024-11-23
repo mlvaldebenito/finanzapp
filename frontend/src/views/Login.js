@@ -10,17 +10,15 @@ import {
   InputAdornment,
   CircularProgress,
 } from '@mui/material';
-import {
-  Email,
-  Lock,
-  Person,
-  PersonAdd,
-} from '@mui/icons-material';
+import { Email, Lock, Person, PersonAdd } from '@mui/icons-material';
 import { useMutation } from '@apollo/client';
-import { REGISTER_USER } from '../graphql/mutations'; // Adjust the path to your mutation
+import { REGISTER_USER, TOKEN_AUTH } from '../graphql/mutations';
+import { useNavigate } from 'react-router-dom';
+import { refreshTokenVar } from '../graphql/reactive';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
+
 
   return (
     <div
@@ -36,13 +34,39 @@ function TabPanel(props) {
 }
 
 const Login = () => {
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState(0); // 0 for login, 1 for register
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const navigate = useNavigate();
 
-  const [registerUser] = useMutation(REGISTER_USER);
+
+  const [tokenAuth] = useMutation(TOKEN_AUTH, {
+    onCompleted: (data) => {
+      if (data?.tokenAuth?.token) {
+        localStorage.setItem('refreshToken', data.tokenAuth.token);
+        refreshTokenVar(data.tokenAuth.token);
+        navigate('/main');
+      }
+    },
+    onError: (error) => {
+      console.error('Login failed', error);
+    },
+  });
+
+  // Mutation for registration
+  const [registerUser] = useMutation(REGISTER_USER, {
+    onCompleted: (data) => {
+      if (data?.registerUser?.user) {
+        alert(`Account created for ${data.registerUser.user.email}`);
+      }
+    },
+    onError: (error) => {
+      console.error(error);
+      alert('Registration failed. Please try again.');
+    },
+  });
 
   const handleTabChange = (_, newValue) => {
     setTab(newValue);
@@ -50,27 +74,26 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (tab === 1 && password !== confirmPassword) {
-      alert('Passwords do not match!');
-      return;
-    }
 
     setIsLoading(true);
 
     try {
       if (tab === 1) {
-        // Register a new user
-        const { data } = await registerUser({
+        if (password !== confirmPassword) {
+          alert('Passwords do not match!');
+          return;
+        }
+
+        await registerUser({
           variables: { email, password },
         });
-        alert(`Account created for ${data.registerUser.user.email}`);
       } else {
-        // Handle login logic here
-        alert('Logged in successfully!');
+        await tokenAuth({
+          variables: { email, password },
+        });
       }
     } catch (error) {
-      console.error(error);
-      alert('An error occurred!');
+      console.error('An error occurred:', error);
     } finally {
       setIsLoading(false);
     }
