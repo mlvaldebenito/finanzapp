@@ -101,7 +101,7 @@ const MainView = () => {
             letterSpacing: '0.01em'
           }}
         >
-          Emitir Boelta ({selectedTransactions.length})
+          Emitir Boleta ({selectedTransactions.length})
         </Button>
       </Box>
       <Paper
