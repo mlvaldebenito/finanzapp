@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 .vscode/
 *.DS_Store
+*.pem
+docker-compose-prod.yml
 
 # C extensions
 *.so

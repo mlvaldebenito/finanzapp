@@ -1,0 +1,84 @@
+name: Deploy Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    environment: Production
+    runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:24.0.6-dind
+        options: --privileged
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up docker buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Install aws cli
+      run: |
+        pip install awscli
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION_NAME }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+    
+    - name: Build and push
+      id: build-and-push
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: linux/amd64
+        push: true
+        tags: ${{ vars.IMAGE_REGISTRY }}/${{ vars.IMAGE_REPOSITORY }}/django:latest
+        cache-from: type=registry,ref=${{ vars.IMAGE_REGISTRY }}/${{ vars.IMAGE_REPOSITORY }}/django:latest
+        cache-to: type=inline
+
+    - name: Set up SSH keys
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.AWS_EC2_SERVER_PEM }}" | tr -d '\r' > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        sudo apt-get update -y
+        sudo apt-get install openssh-client -y
+        eval "$(ssh-agent -s)"
+        ssh-add ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.PROD_SERVER }} >> ~/.ssh/known_hosts
+
+    - name: Copy config files in EC2 instance
+      run: |
+        ssh ec2-user@${{ secrets.PROD_SERVER }} "sudo rm -rf docker-compose.yml .env nginx/ || true"
+        ssh ec2-user@${{ secrets.PROD_SERVER }} "aws s3 cp s3://${{ secrets.BUCKET_NAME }}/docker-compose-prod.yml docker-compose.yml"
+        ssh ec2-user@${{ secrets.PROD_SERVER }} "aws s3 cp s3://${{ secrets.BUCKET_NAME }}/production_env.env .env"
+#        ssh ec2-user@${{ secrets.PROD_SERVER }} "aws s3 cp s3://${{ secrets.BUCKET_NAME }}/stage.conf nginx/stage.conf"
+    
+    - name: Pull docker image
+      run: |
+        ssh ec2-user@${{ secrets.PROD_SERVER }} "sudo aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ vars.IMAGE_REGISTRY }} && docker pull ${{ vars.IMAGE_REGISTRY }}/${{ vars.IMAGE_REPOSITORY }}/django:latest"
+
+    - name: Start containers
+      run: |
+        ssh ec2-user@${{ secrets.PROD_SERVER }} "/home/ec2-user/.local/bin/docker-compose stop web celery-beat celery"
+        ssh ec2-user@${{ secrets.PROD_SERVER }} "/home/ec2-user/.local/bin/docker-compose up -d celery-beat celery web"
+        ssh ec2-user@${{ secrets.PROD_SERVER }} "/home/ec2-user/.local/bin/docker-compose restart nginx_server"
+
+    - name: Run migrations
+      run: |
+        ssh ec2-user@${{ secrets.PROD_SERVER }} "/home/ec2-user/.local/bin/docker-compose exec -T web python manage.py migrate"
+
+    - name: Clean up
+      if: always()
+      run: |
+        ssh ec2-user@${{ secrets.PROD_SERVER }} "docker image prune -f"
