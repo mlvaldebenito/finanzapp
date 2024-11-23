@@ -28,9 +28,16 @@ from apps.models import (
 
 # Define UserType
 class UserType(DjangoObjectType):
+
+    has_bank_credentials = graphene.Boolean()
+
     class Meta:
         model = User
         fields = ("id", "username", "email")
+
+    def resolve_has_bank_credentials(self, info):
+        return BankingCredentials.objects.filter(user=self).exists()
+
 
 class BankingCredentialsType(DjangoObjectType):
     class Meta:
@@ -48,7 +55,7 @@ class RegisterUser(graphene.Mutation):
     def mutate(self, info, email, password):
         user = User.objects.create_user(username=email, email=email, password=password)
         return RegisterUser(user=user)
-    
+
 
 class RegisterBankCredentials(graphene.Mutation):
     bank_credentials = graphene.Field(BankingCredentialsType)
@@ -58,7 +65,9 @@ class RegisterBankCredentials(graphene.Mutation):
         password = graphene.String(required=True)
 
     def mutate(self, info, rut, password):
-        return BankingCredentials.objects.create(user=info.context.user, rut=rut, password=password, bank="Santander")
+        return BankingCredentials.objects.create(
+            user=info.context.user, rut=rut, password=password, bank="Santander"
+        )
 
 
 # Define the Mutation class
@@ -95,10 +104,10 @@ class Query(graphene.ObjectType):
     # Queries for UserDetail
     all_user_details = graphene.List(UserDetailType)
     user_detail = graphene.Field(UserDetailType, id=graphene.Int())
-    current_user = graphene.Field(UserType)
+    get_user = graphene.Field(UserType)
 
-    def resolve_current_user(self, info):
-        user = info.context.user
+    def resolve_get_user(self, info):
+        user = get_user(info.context)
         if user.is_authenticated:
             return user
         return None
