@@ -1,8 +1,6 @@
 import requests
 
-from apps.models import BankMovement, BankAccount, BankingCredentials
-
-import requests
+from apps.models import BankMovement, BankAccount
 from urllib.parse import urlencode
 
 
