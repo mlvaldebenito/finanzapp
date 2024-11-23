@@ -59,26 +59,26 @@ jobs:
 
     - name: Copy config files in EC2 instance
       run: |
-        ssh ec2-user@${{ secrets.PROD_SERVER }} "sudo rm -rf docker-compose.yml .env nginx/ || true"
-        ssh ec2-user@${{ secrets.PROD_SERVER }} "aws s3 cp s3://${{ secrets.BUCKET_NAME }}/docker-compose-prod.yml docker-compose.yml"
-        ssh ec2-user@${{ secrets.PROD_SERVER }} "aws s3 cp s3://${{ secrets.BUCKET_NAME }}/production_env.env .env"
+        ssh ubuntu@${{ secrets.PROD_SERVER }} "sudo rm -rf docker-compose.yml .env nginx/ || true"
+        ssh ubuntu@${{ secrets.PROD_SERVER }} "aws s3 cp s3://${{ secrets.BUCKET_NAME }}/docker-compose-prod.yml docker-compose.yml"
+        ssh ubuntu@${{ secrets.PROD_SERVER }} "aws s3 cp s3://${{ secrets.BUCKET_NAME }}/production_env.env .env"
 #        ssh ec2-user@${{ secrets.PROD_SERVER }} "aws s3 cp s3://${{ secrets.BUCKET_NAME }}/stage.conf nginx/stage.conf"
     
     - name: Pull docker image
       run: |
-        ssh ec2-user@${{ secrets.PROD_SERVER }} "sudo aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ vars.IMAGE_REGISTRY }} && docker pull ${{ vars.IMAGE_REGISTRY }}/${{ vars.IMAGE_REPOSITORY }}/django:latest"
+        ssh ubuntu@${{ secrets.PROD_SERVER }} "sudo aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ vars.IMAGE_REGISTRY }} && docker pull ${{ vars.IMAGE_REGISTRY }}/${{ vars.IMAGE_REPOSITORY }}/django:latest"
 
     - name: Start containers
       run: |
-        ssh ec2-user@${{ secrets.PROD_SERVER }} "/home/ec2-user/.local/bin/docker-compose stop web celery-beat celery"
-        ssh ec2-user@${{ secrets.PROD_SERVER }} "/home/ec2-user/.local/bin/docker-compose up -d celery-beat celery web"
-        ssh ec2-user@${{ secrets.PROD_SERVER }} "/home/ec2-user/.local/bin/docker-compose restart nginx_server"
+        ssh ubuntu@${{ secrets.PROD_SERVER }} "/home/ubuntu/.local/bin/docker-compose stop web celery-beat celery"
+        ssh ubuntu@${{ secrets.PROD_SERVER }} "/home/ubuntu/.local/bin/docker-compose up -d celery-beat celery web"
+        ssh ubuntu@${{ secrets.PROD_SERVER }} "/home/ubuntu/.local/bin/docker-compose restart nginx_server"
 
     - name: Run migrations
       run: |
-        ssh ec2-user@${{ secrets.PROD_SERVER }} "/home/ec2-user/.local/bin/docker-compose exec -T web python manage.py migrate"
+        ssh ubuntu@${{ secrets.PROD_SERVER }} "/home/ubuntu/.local/bin/docker-compose exec -T web python manage.py migrate"
 
     - name: Clean up
       if: always()
       run: |
-        ssh ec2-user@${{ secrets.PROD_SERVER }} "docker image prune -f"
+        ssh ubuntu@${{ secrets.PROD_SERVER }} "docker image prune -f"
