@@ -13,7 +13,7 @@ import { GET_ALL_BANK_MOVEMENTS } from '../graphql/querys';
 
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
-  const [movements,] = useState(100);
+  const [movements,] = useState(63);
 
   // Query for all bank movements
   const {  data } = useQuery(GET_ALL_BANK_MOVEMENTS);
@@ -38,12 +38,21 @@ const MainView = () => {
 
   return (
     <Container maxWidth="xl" sx={{ 
-      py: 4, 
-      minHeight: '100vh',
+      py: 4,
+      minHeight: '100vh', 
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
-      backgroundColor: '#ffffff', //f1f5f9
+      backgroundColor: '#ffffff',
+      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+      borderRadius: '16px',
+      mx: 'auto',
+      my: 4,
+      maxWidth: '1400px',
+      position: 'relative',
+      zIndex: 1,
+      backdropFilter: 'blur(8px)',
+      border: '1px solid rgba(255, 255, 255, 0.1)',
     }}>
       <Box
           sx={{
@@ -96,25 +105,6 @@ const MainView = () => {
             </Typography>
           </Box>
         </Box>
-        <Paper
-        elevation={0}
-        sx={{
-          // height: '100%',
-          width: '100%',
-          overflow: 'hidden',
-          background: 'linear-gradient(145deg, #ffffff, #f8fafc)',
-          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.04)',
-          backdropFilter: 'blur(8px)',
-          border: '1px solid rgba(255, 255, 255, 0.18)',
-          borderRadius: '4px',
-        }}
-      >
-        <TransactionTable
-          transactions={mockTransactions}
-          onSelectionChange={setSelectedTransactions}
-        />
-      </Paper>
-                  {/* Add Button below the table */}
       <Box sx={{ my: 2, display: 'flex', justifyContent: 'flex-end' }}>
         <Button
           variant="contained"
@@ -135,6 +125,24 @@ const MainView = () => {
           Emitir Boleta ({selectedTransactions.length})
         </Button>
       </Box>
+      <Paper
+        elevation={0}
+        sx={{
+          // height: '100%',
+          width: '100%',
+          overflow: 'hidden',
+          background: 'linear-gradient(145deg, #ffffff, #f8fafc)',
+          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.04)',
+          backdropFilter: 'blur(8px)',
+          border: '1px solid rgba(255, 255, 255, 0.18)',
+          borderRadius: '4px',
+        }}
+      >
+        <TransactionTable
+          transactions={mockTransactions}
+          onSelectionChange={setSelectedTransactions}
+        />
+      </Paper>
       <Grid 
         container 
         spacing={3}
