@@ -1,0 +1,14 @@
+# Ignore everything
+*
+# Include only app files
+
+!fingo_app_backend
+!integrator_engine
+!requirements.txt
+!manage.py
+!openssl.cnf
+!pyproject.toml
+!poetry.lock
+!poetry_conditional.sh
+!locale
+!lib
