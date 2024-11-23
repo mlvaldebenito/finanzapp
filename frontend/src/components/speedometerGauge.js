@@ -18,25 +18,33 @@ const SpeedometerGauge = ({ value, maxValue }) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Get the container width
+    const containerWidth = canvas.parentElement.clientWidth;
+    // Calculate new dimensions maintaining aspect ratio
+    const baseWidth = Math.min(500, containerWidth);
+    const baseHeight = (baseWidth * 300) / 500;
+
     // Set actual size in memory (scaled to account for extra pixel density)
     const scale = window.devicePixelRatio;
-    canvas.width = Math.floor(500 * scale);
-    canvas.height = Math.floor(300 * scale);
+    canvas.width = Math.floor(baseWidth * scale);
+    canvas.height = Math.floor(baseHeight * scale);
 
     // Normalize coordinate system to use CSS pixels
     ctx.scale(scale, scale);
 
-    const centerX = 250;
-    const centerY = 250;
-    const radius = 180;
+    // Scale all dimensions proportionally
+    const scaleRatio = baseWidth / 500;
+    const centerX = baseWidth / 2;
+    const centerY = baseHeight * (250/300);
+    const radius = 180 * scaleRatio;
 
     // Clear canvas
-    ctx.clearRect(0, 0, 500, 300);
+    ctx.clearRect(0, 0, baseWidth, baseHeight);
 
     // Draw outer arc
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, Math.PI, 2 * Math.PI, false);
-    ctx.lineWidth = 20;
+    ctx.lineWidth = 20 * scaleRatio;
     ctx.strokeStyle = '#1f2937';
     ctx.stroke();
 
@@ -48,8 +56,8 @@ const SpeedometerGauge = ({ value, maxValue }) => {
     // Draw progress arc
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, startAngle, endAngle, false);
-    ctx.lineWidth = 20;
-    const gradient = ctx.createLinearGradient(0, 0, 500, 0);
+    ctx.lineWidth = 20 * scaleRatio;
+    const gradient = ctx.createLinearGradient(0, 0, baseWidth, 0);
     gradient.addColorStop(0, '#10b981');
     gradient.addColorStop(1, '#3b82f6');
     ctx.strokeStyle = gradient;
@@ -79,7 +87,7 @@ const SpeedometerGauge = ({ value, maxValue }) => {
         const labelX = centerX + (radius - 60) * Math.cos(angle);
         const labelY = centerY + (radius - 60) * Math.sin(angle);
         
-        ctx.font = '14px Inter, system-ui, sans-serif';
+        ctx.font = `${14 * scaleRatio}px Inter, system-ui, sans-serif`;
         ctx.fillStyle = '#9ca3af';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -88,7 +96,9 @@ const SpeedometerGauge = ({ value, maxValue }) => {
     }
 
     // Draw animated needle
-    const needleAngle = Math.PI + (Math.PI * progress) + needleOffset.current;
+    const needleAngle = value > maxValue 
+      ? 0 + needleOffset.current  // Add animation offset while pointing left
+      : Math.PI + (Math.PI * progress) + needleOffset.current;
     const needleLength = radius - 60;
     
     ctx.beginPath();
@@ -115,8 +125,9 @@ const SpeedometerGauge = ({ value, maxValue }) => {
     <canvas
       ref={canvasRef}
       style={{
-        width: '500px',
-        height: '300px',
+        width: '100%',
+        maxWidth: '500px',
+        height: 'auto',
         display: 'block',
         margin: '0 auto'
       }}

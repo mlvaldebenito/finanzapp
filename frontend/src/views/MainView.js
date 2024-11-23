@@ -6,16 +6,19 @@ import MetricsCard from '../components/MetricsCard';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import SpeedometerGauge from '../components/speedometerGauge';
 import WarningIcon from '@mui/icons-material/Warning';
+import getSpeedometerMessage from '../helpers/speedometerMessages';
 
 
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
-  const [balance, setBalance] = useState(43);
+  const [movements, setMovements] = useState(100);
 
   // Calculate metrics
   const totalTransactions = mockTransactions.length;
   const totalAmount = mockTransactions.reduce((sum, t) => sum + t.amount, 0);
   const avgTicketProbability = mockTransactions.reduce((sum, t) => sum + t.ticketProbability, 0) / totalTransactions;
+  
+  const speedometerMessage = getSpeedometerMessage(movements);
 
   // Add handler function
   const handleSendSelected = () => {
@@ -32,22 +35,22 @@ const MainView = () => {
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
-      backgroundColor: '#f1f5f9',
+      backgroundColor: '#ffffff', //f1f5f9
     }}>
       <Box
           sx={{
             maxWidth: '4xl',
             mx: 'auto',
-            bgcolor: '#f1f5f9',
+            bgcolor: '#ffffff', //f1f5f9
             borderRadius: '16px',
             p: 4,
+            pt: 0,
             backdropFilter: 'blur(16px)',
-            border: '1px solid',
+            border: '0px solid',
             borderColor: 'grey.800',
-            my: {xs: 5}
           }}
         >
-          <SpeedometerGauge value={balance} maxValue={50} />
+          <SpeedometerGauge value={movements} maxValue={50} />
           <Box sx={{ textAlign: 'center', mt: 3 }}>
             <Typography 
               variant="h6" 
@@ -56,22 +59,33 @@ const MainView = () => {
                 fontSize: '1.125rem'
               }}
             >
-              {/* TODO: Add logic for calculating transactions */}
-              Transferencias de personas distintas: 43
+              {/* TODO: Add logic for calculating transactions when queries are ready */}
+              Transferencias de personas distintas: {movements}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
-              <WarningIcon sx={{ color: '#f43f5e', fontSize: '2rem' }} />
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                <WarningIcon sx={{ color: speedometerMessage.color, fontSize: '2rem' }} />
+              </Box>
               <Typography
                 variant="h3"
                 sx={{
                   fontWeight: 700,
-                  color: '#f43f5e',
+                  color: speedometerMessage.color,
                   fontSize: '2.25rem'
                 }}
               >
-                Ojito con las transferencias mi rey!
+                {speedometerMessage.message}
               </Typography>
             </Box>
+            <Typography
+              variant="subtitle1"
+              sx={{
+                color: speedometerMessage.color,
+                mt: 1
+              }}
+            >
+              {speedometerMessage.subMessage}
+            </Typography>
           </Box>
         </Box>
         <Paper

@@ -74,7 +74,7 @@ const TransactionTable = ({
       initialState={{
         pagination: { paginationModel: { pageSize: 5 } },
       }}
-      pageSizeOptions={[20, 50, 100]}
+      pageSizeOptions={[5, 10, 50, 100]}
       sx={{
         height: 'auto',
         mb: 'none',
