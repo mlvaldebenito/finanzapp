@@ -7,11 +7,19 @@ import ReceiptIcon from '@mui/icons-material/Receipt';
 import SpeedometerGauge from '../components/speedometerGauge';
 import WarningIcon from '@mui/icons-material/Warning';
 import getSpeedometerMessage from '../helpers/speedometerMessages';
+import { useQuery } from '@apollo/client';
+import { GET_ALL_BANK_MOVEMENTS } from '../graphql/querys';
 
 
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
   const [movements, setMovements] = useState(100);
+
+  // Query for all bank movements
+  const { loading, error, data } = useQuery(GET_ALL_BANK_MOVEMENTS);
+  console.log(data);
+
+
 
   // Calculate metrics
   const totalTransactions = mockTransactions.length;
