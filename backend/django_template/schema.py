@@ -43,6 +43,17 @@ class RegisterUser(graphene.Mutation):
     def mutate(self, info, email, password):
         user = User.objects.create_user(username=email, email=email, password=password)
         return RegisterUser(user=user)
+    
+
+class RegisterBankCredentials(graphene.Mutation):
+    bank_credentials = graphene.Field()
+
+    class Arguments:
+        rut = graphene.String(required=True)
+        password = graphene.String(required=True)
+
+    def mutate(self, info, rut, password):
+        pass
 
 
 # Define the Mutation class
@@ -54,6 +65,7 @@ class Mutation(graphene.ObjectType):
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
+    register_bank_credentials = RegisterBankCredentials.Field()
 
 
 # Define Query class for existing queries

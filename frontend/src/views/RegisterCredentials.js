@@ -20,8 +20,8 @@ import {
 import { prettifyRut, removeSeparators } from 'react-rut-formatter';
 
 const RegisterCredentials = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [rut, setRut] = useState({ formatted: '', raw: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const [rut, setRut] = useState({ formatted: '', raw: '', valid: false });
   const [password, setPassword] = useState('')
 
 
@@ -123,7 +123,7 @@ const RegisterCredentials = () => {
                   type="submit"
                   variant="contained"
                   size="large"
-                  disabled={isLoading}
+                  disabled={isLoading || password === '' || rut.raw === ''}
                   sx={{
                     mt: 1,
                     py: 1.5,

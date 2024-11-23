@@ -36,4 +36,12 @@ export const VERIFY_TOKEN = gql`
         payload
         }
     }
-    `;
+`;
+
+export const REGISTER_BANK_CREDENTIALS = gql`
+  mutation registerBankCredentials($rut: String!, $password: String!) {
+    registerBankCredentials(rut: $rut, password: $password) {
+      id
+    }
+  }
+`;
