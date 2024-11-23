@@ -11,36 +11,36 @@ const TransactionTable = ({
   const columns = [
     { 
       field: 'accountingDate', 
-      headerName: 'Date', 
+      headerName: 'Fecha', 
       width: 120,
     },
     { 
       field: 'observation', 
-      headerName: 'Description', 
+      headerName: 'Descripción', 
       width: 300,
       flex: 1
     },
   {
 
     field: 'amount',
-    headerName: 'Amount',
+    headerName: 'Monto',
     width: 130,
-    valueFormatter: (params) => {
-      if (params == null) return '-';
-      return new Intl.NumberFormat('en-US', {
+    renderCell: ({row}) => {
+      const formatted = Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
-      }).format(params);
+      }).format(row.amount);
+      return <Typography sx={{color: (row.amount< 0 ? 'red': 'green')}}>{formatted}</Typography>
     },
   },
     { 
       field: 'category', 
-      headerName: 'Category', 
+      headerName: 'Categoría', 
       width: 130 
     },
     {
       field: 'ticketProbability',
-      headerName: 'Risk Score',
+      headerName: 'Score Riesgo',
       width: 120,
       renderCell: (params) => (
         <Typography

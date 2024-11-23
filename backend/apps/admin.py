@@ -34,11 +34,11 @@ class CustomUserAdmin(admin.ModelAdmin):
     get_rut.short_description = "RUT"
 
 
-# Register the UserDetail model (optional, if you want to manage it directly)
-@admin.register(UserDetail)
-class UserDetailAdmin(admin.ModelAdmin):
-    list_display = ("user", "rut")
-    search_fields = ("rut", "user__username")
+# # Register the UserDetail model (optional, if you want to manage it directly)
+# @admin.register(UserDetail)
+# class UserDetailAdmin(admin.ModelAdmin):
+#     list_display = ("user",")
+#     search_fields = ("rut", "user__username")
 
 
 @admin.register(BankAccount)

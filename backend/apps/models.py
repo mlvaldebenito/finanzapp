@@ -33,13 +33,13 @@ class UserDetail(BaseModel):
     user = models.OneToOneField(
         get_user_model(), on_delete=models.PROTECT, related_name="user_detail"
     )
-    rut = models.CharField(max_length=20)
 
 
 class BankingCredentials(BaseModel):
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
-    bank = models.CharField(null=True, blank=True, max_length=30)
+    rut = models.CharField(max_length=20)
     password = models.CharField(null=True, blank=True, max_length=30)
+    bank = models.CharField(null=True, blank=True, max_length=30)
 
 
 class BankAccount(BaseModel):
