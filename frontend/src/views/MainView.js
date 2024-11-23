@@ -14,7 +14,6 @@ const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
   const [movements,] = useState(63);
 
-  // Query for all bank movements
   const { data  } = useQuery(GET_ALL_BANK_MOVEMENTS);
   const transactions = data?.allBankMovements || [];
   console.log(transactions);
