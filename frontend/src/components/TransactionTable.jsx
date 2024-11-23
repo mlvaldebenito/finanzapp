@@ -11,19 +11,19 @@ const TransactionTable = ({
   const columns = [
     { 
       field: 'accountingDate', 
-      headerName: 'Date', 
+      headerName: 'Fecha', 
       width: 120,
     },
     { 
       field: 'observation', 
-      headerName: 'Description', 
+      headerName: 'Descripción', 
       width: 300,
       flex: 1
     },
   {
 
     field: 'amount',
-    headerName: 'Amount',
+    headerName: 'Monto',
     width: 130,
     renderCell: ({row}) => {
       const formatted = Intl.NumberFormat('en-US', {
@@ -35,12 +35,12 @@ const TransactionTable = ({
   },
     { 
       field: 'category', 
-      headerName: 'Category', 
+      headerName: 'Categoría', 
       width: 130 
     },
     {
       field: 'ticketProbability',
-      headerName: 'Risk Score',
+      headerName: 'Score Riesgo',
       width: 120,
       renderCell: (params) => (
         <Typography
