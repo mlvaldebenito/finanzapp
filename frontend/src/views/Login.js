@@ -111,7 +111,7 @@ const Login = () => {
                 <TextField
                   required
                   fullWidth
-                  label="Password"
+                  label="Contraseña"
                   type="password"
                   InputProps={{
                     startAdornment: (
@@ -170,7 +170,7 @@ const Login = () => {
                 <TextField
                   required
                   fullWidth
-                  label="Password"
+                  label="Contraseña"
                   type="password"
                   InputProps={{
                     startAdornment: (
@@ -183,7 +183,7 @@ const Login = () => {
                 <TextField
                   required
                   fullWidth
-                  label="Confirm Password"
+                  label="Confirmar Contraseña"
                   type="password"
                   InputProps={{
                     startAdornment: (
