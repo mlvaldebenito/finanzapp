@@ -23,7 +23,7 @@ const getSpeedometerMessage = (value) => {
   } else if (value >= 25) {
     return {
       message: "Vas bien",
-      subMessage: "Mantén el ritmo actual",
+      subMessage: "No estas cerca del límite",
       severity: "info",
       color: '#3b82f6'  
     };
