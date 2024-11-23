@@ -29,7 +29,6 @@ const TransactionTable = ({
     headerName: 'Amount',
     width: 130,
     valueFormatter: (params) => {
-      console.log('Amount params:', params);
       if (params == null) return '-';
       return new Intl.NumberFormat('en-US', {
         style: 'currency',
