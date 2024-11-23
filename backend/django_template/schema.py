@@ -94,13 +94,10 @@ class Query(graphene.ObjectType):
 
     def resolve_all_bank_movements(root, info):
         auth_user = get_user(info.context)
-        user = info.context.user
-        print("user", user)
-        print("auth_user", auth_user)
         if auth_user.is_anonymous:
             return BankMovement.objects.none()
 
-        return BankMovement.objects.all()
+        return BankMovement.objects.filter(bank_account__user=auth_user)
 
     # Resolvers for BankAccount
     def resolve_all_bank_accounts(root, info):
