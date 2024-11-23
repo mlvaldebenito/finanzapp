@@ -19,7 +19,6 @@ function OnboardingFlow() {
   const [credentials, setCredentials] = useState({ sii: "", bank: "" });
 
   const handleNext = () => {
-    console.log("Next Step:", step + 1);
     setStep((prev) => prev + 1);
   };
   const handleBack = () => setStep((prev) => Math.max(prev - 1, 0));

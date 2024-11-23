@@ -12,7 +12,7 @@ superuser:
 	$(DOCKER_EXEC) $(MANAGE_PY) createsuperuser
 
 shell:
-	$(DOCKER_EXEC) $(MANAGE_PY) shell_plus
+	$(DOCKER_EXEC) $(MANAGE_PY) shell
 
 shell_plus:
 	$(DOCKER_EXEC) $(MANAGE_PY) shell_plus --notebook
@@ -85,3 +85,6 @@ delete_branches:
 
 collectstatic:
 	$(DOCKER_EXEC) $(MANAGE_PY) collectstatic --noinput
+
+install_requirements:
+	$(DOCKER_EXEC) $(PIP_BIN) install -r requirements.txt

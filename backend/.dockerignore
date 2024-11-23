@@ -2,8 +2,9 @@
 *
 # Include only app files
 
-!fingo_app_backend
-!integrator_engine
+!django_template
+!apps
+!static
 !requirements.txt
 !manage.py
 !openssl.cnf
