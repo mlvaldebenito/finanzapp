@@ -85,3 +85,6 @@ delete_branches:
 
 collectstatic:
 	$(DOCKER_EXEC) $(MANAGE_PY) collectstatic --noinput
+
+install_requirements:
+	$(DOCKER_EXEC) $(PIP_BIN) install -r requirements.txt
