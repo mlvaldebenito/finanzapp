@@ -1,6 +1,6 @@
 import requests
 
-from apps.models import BankMovement
+from apps.models import BankMovement, BankAccount,  BankingCredentials
 
 class SantanderScraper:
     @classmethod
@@ -119,9 +119,10 @@ class SantanderScraper:
         return response.json()
     
     @classmethod
-    def parse_movements(cls, response, bank_account):
+    def parse_movements(cls, response, account_number):
         json_response = response.json()
         movements = json_response["movements"]
+        bank_account, _ = BankAccount.objects.get_or_create(account_number=account_number, bank="Santander")
         return [
             BankMovement(
                 accounting_date=mov["accountingDate"],
@@ -150,8 +151,8 @@ class SantanderClient:
         access_token, jwt_token = SantanderScraper.fetch_login_tokens(banking_credentials)
         client_accounts = SantanderScraper.fetch_bank_accounts(jwt_token, banking_credentials.user.user_detail.rut)
         to_create = []
-        for account in client_accounts:
-            response = SantanderScraper.fetch_bank_movements(access_token, account)
-            fetched = SantanderScraper.parse_movements(response)
+        for account_number in client_accounts:
+            response = SantanderScraper.fetch_bank_movements(access_token, account_number)
+            fetched = SantanderScraper.parse_movements(response, account_number)
             to_create.append(fetched)
         BankMovement.objects.bulk_create(to_create, ignore_conflicts=True)
