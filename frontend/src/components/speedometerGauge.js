@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, {  useRef } from 'react';
 import useAnimationFrame from '../hooks/useAnimationFrame';
 
 const SpeedometerGauge = ({ value, maxValue }) => {
