@@ -12,7 +12,8 @@ class BankMovement(models.Model):
     movement_number = models.PositiveIntegerField()
     amount = models.IntegerField()
 
-
-class User(AbstractUser):
+class CustomUser(AbstractUser):
+    b = models.B
     rut = models.IntegerField()
     dv = models.IntegerField()
+
