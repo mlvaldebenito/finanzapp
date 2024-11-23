@@ -4,10 +4,13 @@ import { mockTransactions } from '../data/mockData.ts';
 import TransactionTable from '../components/TransactionTable';
 import MetricsCard from '../components/MetricsCard';
 import ReceiptIcon from '@mui/icons-material/Receipt';
+import SpeedometerGauge from '../components/speedometerGauge';
+import WarningIcon from '@mui/icons-material/Warning';
 
 
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
+  const [balance, setBalance] = useState(43);
 
   // Calculate metrics
   const totalTransactions = mockTransactions.length;
@@ -20,19 +23,96 @@ const MainView = () => {
       alert('Please select transactions to send');
       return;
     }
-    // TODO: Implement actual sending logic
-    console.log('Sending transactions:', selectedTransactions);
   };
 
   return (
     <Container maxWidth="xl" sx={{ 
       py: 4, 
-      height: '100vh',
+      minHeight: '100vh',
       display: 'flex',
       flexDirection: 'column',
       overflow: 'hidden',
       backgroundColor: '#f1f5f9',
     }}>
+      <Box
+          sx={{
+            maxWidth: '4xl',
+            mx: 'auto',
+            bgcolor: '#f1f5f9',
+            borderRadius: '16px',
+            p: 4,
+            backdropFilter: 'blur(16px)',
+            border: '1px solid',
+            borderColor: 'grey.800',
+            my: {xs: 5}
+          }}
+        >
+          <SpeedometerGauge value={balance} maxValue={50} />
+          <Box sx={{ textAlign: 'center', mt: 3 }}>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                color: '#475569',
+                fontSize: '1.125rem'
+              }}
+            >
+              {/* TODO: Add logic for calculating transactions */}
+              Transferencias de personas distintas: 43
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
+              <WarningIcon sx={{ color: '#f43f5e', fontSize: '2rem' }} />
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 700,
+                  color: '#f43f5e',
+                  fontSize: '2.25rem'
+                }}
+              >
+                Ojito con las transferencias mi rey!
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+        <Paper
+        elevation={0}
+        sx={{
+          // height: '100%',
+          width: '100%',
+          overflow: 'hidden',
+          background: 'linear-gradient(145deg, #ffffff, #f8fafc)',
+          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.04)',
+          backdropFilter: 'blur(8px)',
+          border: '1px solid rgba(255, 255, 255, 0.18)',
+          borderRadius: '4px',
+        }}
+      >
+        <TransactionTable
+          transactions={mockTransactions}
+          onSelectionChange={setSelectedTransactions}
+        />
+      </Paper>
+                  {/* Add Button below the table */}
+      <Box sx={{ my: 2, display: 'flex', justifyContent: 'flex-end' }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSendSelected}
+          disabled={selectedTransactions.length === 0}
+          startIcon={<ReceiptIcon />}
+          sx={{
+            fontFamily: "'Inter', sans-serif",
+            fontWeight: 600,
+            fontSize: '0.875rem',
+            textTransform: 'none',
+            padding: '8px 24px',
+            borderRadius: '8px',
+            letterSpacing: '0.01em'
+          }}
+        >
+          Emitir Boleta ({selectedTransactions.length})
+        </Button>
+      </Box>
       <Grid 
         container 
         spacing={3}
@@ -43,7 +123,7 @@ const MainView = () => {
           p: { xs: 2, sm: 3 },
           mb: 4,
           borderRadius: '16px',
-          background: 'linear-gradient(145deg, #2196f3, #f8fafc)',
+          background: 'linear-gradient(145deg, #3b82f6, #f8fafc)',
           boxShadow: '0 4px 24px rgba(0, 0, 0, 0.04)',
           backdropFilter: 'blur(8px)',
           width: '100%',
@@ -57,14 +137,14 @@ const MainView = () => {
           <MetricsCard
             title="Transacciones último mes"
             value={totalTransactions}
-            color="#2196f3"
+            color="#3b82f6"
             subtitle={<Box sx={{ display: 'flex', alignItems: 'center' }}>
-              {/* TODO: Add logic to calculate remaining transactions to be taxed COUNTING DIFFERENT ACCOUNT AMOUNTS */}
-              <Typography variant="caption" sx={{ color: '#10b981', fontSize: '0.7rem', fontWeight: 600 }}>Estas a {50 -totalTransactions} transacciones de ser tributado.</Typography>
+              <Typography variant="caption" sx={{ color: '#10b981', fontSize: '0.7rem', fontWeight: 600 }}>
+                Estas a {50 - totalTransactions} transacciones de ser tributado.
+              </Typography>
             </Box>}
           />
         </Grid>
-        {/* TODO: Remover el monto total o complementarlo con el IVA. */}
         <Grid item xs={12} sm={6} md={4}>
           <MetricsCard
             title="Total Facturado"
@@ -83,45 +163,6 @@ const MainView = () => {
           />
         </Grid>
       </Grid>
-            {/* Add Button below the table */}
-      <Box sx={{ my: 2, display: 'flex', justifyContent: 'flex-end' }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSendSelected}
-          disabled={selectedTransactions.length === 0}
-          startIcon={<ReceiptIcon />}
-          sx={{
-            fontFamily: "'Inter', sans-serif",
-            fontWeight: 600,
-            fontSize: '0.875rem',
-            textTransform: 'none',
-            padding: '8px 24px',
-            borderRadius: '8px',
-            letterSpacing: '0.01em'
-          }}
-        >
-          Emitir Boelta ({selectedTransactions.length})
-        </Button>
-      </Box>
-      <Paper
-        elevation={0}
-        sx={{
-          // height: '100%',
-          width: '100%',
-          overflow: 'hidden',
-          background: 'linear-gradient(145deg, #ffffff, #f8fafc)',
-          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.04)',
-          backdropFilter: 'blur(8px)',
-          border: '1px solid rgba(255, 255, 255, 0.18)',
-          borderRadius: '4px',
-        }}
-      >
-        <TransactionTable
-          transactions={mockTransactions}
-          onSelectionChange={setSelectedTransactions}
-        />
-      </Paper>
     </Container>
   );
 };
