@@ -34,6 +34,8 @@ ALLOWED_HOSTS = ["*"]
 
 ADMIN_ROUTE = "ffdabo"
 
+AUTH_USER_MODEL="apps.User"
+
 # Application definition
 
 INSTALLED_APPS = [
