@@ -14,23 +14,27 @@ import { GET_ALL_BANK_MOVEMENTS } from '../graphql/querys';
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
   const [movements,] = useState(100);
+  console.log("hola");
 
   // Query for all bank movements
-  const {  data } = useQuery(GET_ALL_BANK_MOVEMENTS);
-  console.log(data);
+  const { data  } = useQuery(GET_ALL_BANK_MOVEMENTS);
+  const transactions = data?.allBankMovements || [];
+  console.log(transactions);
+  
+
 
 
 
   // Calculate metrics
-  const totalTransactions = mockTransactions.length;
-  const totalAmount = mockTransactions.reduce((sum, t) => sum + t.amount, 0);
-  const avgTicketProbability = mockTransactions.reduce((sum, t) => sum + t.ticketProbability, 0) / totalTransactions;
+  const totalTransactions = transactions?.length || '';
+  const totalAmount = transactions?.length ? transactions?.reduce((sum, t) => sum + t.amount, 0) : 0;
+  const avgTicketProbability = transactions?.length ? transactions.reduce((sum, t) => sum + (t.ticketProbability || 0), 0) / totalTransactions : 0;
   
   const speedometerMessage = getSpeedometerMessage(movements);
 
   // Add handler function
   const handleSendSelected = () => {
-    if (selectedTransactions.length === 0) {
+    if (!selectedTransactions?.length) {
       alert('Please select transactions to send');
       return;
     }
@@ -110,7 +114,7 @@ const MainView = () => {
         }}
       >
         <TransactionTable
-          transactions={mockTransactions}
+          transactions={transactions}
           onSelectionChange={setSelectedTransactions}
         />
       </Paper>
@@ -120,7 +124,7 @@ const MainView = () => {
           variant="contained"
           color="primary"
           onClick={handleSendSelected}
-          disabled={selectedTransactions.length === 0}
+          disabled={!selectedTransactions?.length}
           startIcon={<ReceiptIcon />}
           sx={{
             fontFamily: "'Inter', sans-serif",
@@ -132,7 +136,7 @@ const MainView = () => {
             letterSpacing: '0.01em'
           }}
         >
-          Emitir Boleta ({selectedTransactions.length})
+          Emitir Boleta ({selectedTransactions?.length || ''})
         </Button>
       </Box>
       <Grid 

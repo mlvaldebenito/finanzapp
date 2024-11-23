@@ -4,7 +4,7 @@ export const mockTransactions: Transaction[] = [
   {
     id: '1',
     date: '2024-02-28',
-    description: 'Online Purchase - Amazon',
+    observation: 'Online Purchase - Amazon',
     amount: 299.99,
     type: 'debit',
     category: 'Shopping',
@@ -13,7 +13,7 @@ export const mockTransactions: Transaction[] = [
   {
     id: '2',
     date: '2024-02-27',
-    description: 'Salary Deposit',
+    observation: 'Salary Deposit',
     amount: 5000.00,
     type: 'credit',
     category: 'Income',
@@ -22,7 +22,7 @@ export const mockTransactions: Transaction[] = [
   {
     id: '3',
     date: '2024-02-26',
-    description: 'Restaurant Payment',
+    observation: 'Restaurant Payment',
     amount: 85.50,
     type: 'debit',
     category: 'Dining',
@@ -31,7 +31,7 @@ export const mockTransactions: Transaction[] = [
   {
     id: '4',
     date: '2024-02-25',
-    description: 'Subscription Service',
+    observation: 'Subscription Service',
     amount: 14.99,
     type: 'debit',
     category: 'Entertainment',
@@ -40,7 +40,7 @@ export const mockTransactions: Transaction[] = [
   {
     id: '5',
     date: '2024-02-24',
-    description: 'Utility Bill',
+    observation: 'Utility Bill',
     amount: 150.00,
     type: 'debit',
     category: 'Bills',

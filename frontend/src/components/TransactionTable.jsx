@@ -10,15 +10,12 @@ const TransactionTable = ({
 }) => {
   const columns = [
     { 
-      field: 'date', 
+      field: 'accountingDate', 
       headerName: 'Date', 
       width: 120,
-      valueFormatter: (params) => {
-        return new Date(params).toLocaleDateString();
-      }
     },
     { 
-      field: 'description', 
+      field: 'observation', 
       headerName: 'Description', 
       width: 300,
       flex: 1

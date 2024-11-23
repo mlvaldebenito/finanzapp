@@ -5,14 +5,11 @@ import MainView from './views/MainView';
 import OnBoardingView from './views/OnBoardingView';
 import Login from './views/Login';
 
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-
-const client = new ApolloClient({
-  uri: 'http://localhost:8000/graphql/',
-  cache: new InMemoryCache(),
-});
+import {  ApolloProvider } from '@apollo/client';
+import client from './apollo/client';
 
 function App() {
+  console.log('REACT_APP_GRAPHQL_URI', process.env.REACT_APP_BACKEND_URI)
   return (
     <ApolloProvider client={client}>
     <Router>

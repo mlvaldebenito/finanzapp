@@ -6,6 +6,8 @@ export const GET_ALL_BANK_MOVEMENTS = gql`
     allBankMovements {
       id
       amount
+      accountingDate
+      observation
     }
   }
 `;
