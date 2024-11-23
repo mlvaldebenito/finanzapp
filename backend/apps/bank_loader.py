@@ -1,0 +1,2 @@
+class SantanderLoader:
+    pass
