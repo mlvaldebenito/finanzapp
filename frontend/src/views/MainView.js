@@ -12,11 +12,12 @@ import { GET_ALL_BANK_MOVEMENTS } from '../graphql/querys';
 
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
-  const [movements,] = useState(63);
 
   // Query for all bank movements
-  const { data  } = useQuery(GET_ALL_BANK_MOVEMENTS);
+  const { data } = useQuery(GET_ALL_BANK_MOVEMENTS);
   const transactions = data?.allBankMovements || [];
+  const incomeTransactions = transactions.filter((mov) => mov.amount > 0);
+
   console.log(transactions);
   
 
@@ -28,7 +29,7 @@ const MainView = () => {
   const totalAmount = transactions?.length ? transactions?.reduce((sum, t) => sum + t.amount, 0) : 0;
   const avgTicketProbability = transactions?.length ? transactions.reduce((sum, t) => sum + (t.ticketProbability || 0), 0) / totalTransactions : 0;
   
-  const speedometerMessage = getSpeedometerMessage(movements);
+  const speedometerMessage = getSpeedometerMessage(incomeTransactions?.length ?? 0);
 
   // Add handler function
   const handleSendSelected = () => {
@@ -69,7 +70,7 @@ const MainView = () => {
             borderColor: 'grey.800',
           }}
         >
-          <SpeedometerGauge value={movements} maxValue={50} />
+          <SpeedometerGauge value={incomeTransactions?.length ?? 0} maxValue={50} />
           <Box sx={{ textAlign: 'center', mt: 3 }}>
             <Typography 
               variant="h6" 
@@ -79,7 +80,7 @@ const MainView = () => {
               }}
             >
               {/* TODO: Add logic for calculating transactions when queries are ready */}
-              Transferencias de personas distintas: {movements}
+              Ingresos de transferencias de personas distintas: {incomeTransactions?.length ?? 0}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
@@ -146,7 +147,7 @@ const MainView = () => {
         />
       </Paper>
       <Grid 
-        container 
+        container
         spacing={3}
         sx={{
           display: 'flex',
