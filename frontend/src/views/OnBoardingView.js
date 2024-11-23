@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { Box, Button, Typography, Card, CardContent } from "@mui/material";
+import { Box } from "@mui/material";
 import WelcomeStep from "../components/onboarding/WelcomeStep";
-import NoOnboardingStep from "../components/onboarding/NoOnboardingStep";
 import SelectActivityStep from "../components/onboarding/SelectActivityStep";
 import ConfirmActivityStep from "../components/onboarding/ConfirmActivityStep";
 import CredentialsStep from "../components/onboarding/CredentialsStep";
@@ -39,26 +38,9 @@ function OnboardingFlow() {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        backgroundColor: "#f9fafb",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        py: 4,
-      }}
-    >
-      <Card
-        sx={{
-          maxWidth: 600,
-          width: "100%",
-          mx: 2,
-          boxShadow: 3,
-          borderRadius: 2,
-        }}
-      >
-        <CardContent>
+    <Box>
+      <Box>
+        <Box>
           {step === 0 && (
             <WelcomeStep
               onSelect={(value) => {
@@ -67,34 +49,21 @@ function OnboardingFlow() {
               }}
             />
           )}
-          {step === 1 &&
-            (startedActivities ? (
-              <NoOnboardingStep onReset={handleReset} />
-            ) : (
-              <>
-                <Typography variant="h5" fontWeight="bold" gutterBottom>
-                  Comencemos tu Onboarding
-                </Typography>
-                <Button variant="contained" onClick={handleNext}>
-                  Continuar
-                </Button>
-              </>
-            ))}
-          {step === 2 && (
+          {step === 1 && (
             <SelectActivityStep
               selectedActivity={selectedActivity}
               onActivitySelect={handleActivitySelection}
               onNext={handleNext}
             />
           )}
-          {step === 3 && (
+          {step === 2 && (
             <ConfirmActivityStep
               selectedActivity={selectedActivity}
               onNext={handleNext}
               onBack={handleBack}
             />
           )}
-          {step === 4 && (
+          {step === 3 && (
             <CredentialsStep
               label="Usuario SII"
               value={credentials.sii}
@@ -105,7 +74,7 @@ function OnboardingFlow() {
               onBack={handleBack}
             />
           )}
-          {step === 5 && (
+          {step === 4 && (
             <CredentialsStep
               label="Usuario del Banco"
               value={credentials.bank}
@@ -116,9 +85,9 @@ function OnboardingFlow() {
               onBack={handleBack}
             />
           )}
-          {step === 6 && <CompletionStep onReset={handleReset} />}
-        </CardContent>
-      </Card>
+          {step === 5 && <CompletionStep onReset={handleReset} />}
+        </Box>
+      </Box>
     </Box>
   );
 }
