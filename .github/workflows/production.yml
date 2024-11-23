@@ -42,8 +42,8 @@ jobs:
         context: .
         platforms: linux/amd64
         push: true
-        tags: ${{ vars.IMAGE_REGISTRY }}/${{ vars.IMAGE_REPOSITORY }}/django:latest
-        cache-from: type=registry,ref=${{ vars.IMAGE_REGISTRY }}/${{ vars.IMAGE_REPOSITORY }}/django:latest
+        tags: ${{ secrets.IMAGE_REGISTRY }}/${{ secrets.IMAGE_REPOSITORY }}/django:latest
+        cache-from: type=registry,ref=${{ secrets.IMAGE_REGISTRY }}/${{ secrets.IMAGE_REPOSITORY }}/django:latest
         cache-to: type=inline
 
     - name: Set up SSH keys
