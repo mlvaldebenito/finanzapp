@@ -1,10 +1,17 @@
 const getSpeedometerMessage = (value) => {
-  if (value >= 45) {
+  if (value >= 50) {
     return {
       message: "¡Límite superado!",
       subMessage: "El banco deber reportar tu información al SII!",
       severity: "error",
       color: '#f43f5e'  
+    };
+  } else if (value >= 45) {
+    return {
+      message: "¡Atención a tus transferencia!",
+      subMessage: "Te estás acercando al límite",
+      severity: "warning",
+      color: '#FFA500'  
     };
   } else if (value >= 35) {
     return {
