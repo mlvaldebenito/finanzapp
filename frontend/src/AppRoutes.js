@@ -20,14 +20,6 @@ function AppRoutes() {
             path="/"
             element={
               <PublicRoute>
-                <MyNewView />
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <PublicRoute>
                 <Login />
               </PublicRoute>
             }
