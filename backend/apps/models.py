@@ -14,6 +14,11 @@ class BankMovement(models.Model):
     bank_account = models.ForeignKey("apps.BankAccount", on_delete=models.PROTECT)
 
 
+class UserDetail(models.Model):
+    user = models.OneToOneField(get_user_model(), on_delete=models.PROTECT, related_name="user_detail")
+    rut = models.CharField(max_length=20)
+
+
 class BankingCredentials(models.Model):
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
