@@ -13,10 +13,10 @@ import { GET_ALL_BANK_MOVEMENTS } from '../graphql/querys';
 
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
-  const [movements, setMovements] = useState(100);
+  const [movements,] = useState(100);
 
   // Query for all bank movements
-  const { loading, error, data } = useQuery(GET_ALL_BANK_MOVEMENTS);
+  const {  data } = useQuery(GET_ALL_BANK_MOVEMENTS);
   console.log(data);
 
 
