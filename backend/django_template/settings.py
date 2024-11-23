@@ -140,6 +140,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # CORS configuration
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React frontend running on port 3000
+    "https://ephemeral-beijinho-4f168c.netlify.app/",
+    "http://altoque.finanzapp.org/",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
