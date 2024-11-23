@@ -5,8 +5,16 @@ import MainView from './views/MainView';
 import OnBoardingView from './views/OnBoardingView';
 import Login from './views/Login';
 
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+
+const client = new ApolloClient({
+  uri: 'http://localhost:8000/graphql/',
+  cache: new InMemoryCache(),
+});
+
 function App() {
   return (
+    <ApolloProvider client={client}>
     <Router>
       <Routes>
         <Route path="/" element={<MyNewView />} />
@@ -16,6 +24,7 @@ function App() {
         <Route path="/onboarding" element={<OnBoardingView />} />
       </Routes>
     </Router>
+    </ApolloProvider>
   );
 }
 
