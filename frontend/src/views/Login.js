@@ -55,11 +55,11 @@ const Login = () => {
     },
   });
 
-  // Mutation for registration
   const [registerUser] = useMutation(REGISTER_USER, {
     onCompleted: (data) => {
       if (data?.registerUser?.user) {
         alert(`Account created for ${data.registerUser.user.email}`);
+        setTab(0);
       }
     },
     onError: (error) => {
