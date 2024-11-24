@@ -89,6 +89,7 @@ const TransactionTable = ({
         );
         onSelectionChange(selectedTransactions);
       }}
+      isRowSelectable={({row}) => {return (row.amount > 0)}}
       initialState={{
         pagination: { paginationModel: { pageSize: 5 } },
       }}

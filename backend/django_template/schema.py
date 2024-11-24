@@ -115,12 +115,14 @@ class Query(graphene.ObjectType):
     get_user = graphene.Field(UserType)
 
     # Resolvers for BankMovement
-    def resolve_all_bank_movements(root, info, start_date=None, end_date=None):
+    def resolve_all_bank_movements(root, info, start_date=None, end_date=None, amount_gt=None):
         auth_user = get_user(info.context)
         if auth_user.is_anonymous:
             return BankMovement.objects.none()
 
-        queryset = BankMovement.objects.filter(bank_account__user=auth_user, amount__gt=0)
+        queryset = BankMovement.objects.filter(bank_account__user=auth_user)
+        if amount_gt:
+            queryset = queryset.filter(amount__gt=0)
         if start_date:
             queryset = queryset.filter(accounting_date__gte=start_date)
         if end_date:
