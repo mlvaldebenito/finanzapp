@@ -169,6 +169,12 @@ class Query(graphene.ObjectType):
     # Queries for ProcessedServiceListingType
     all_processed_service_listing = graphene.List(ProcessedServiceListingType)
     processed_service_listing = graphene.Field(ProcessedServiceListingType, id=graphene.Int())
+    recommedation_of_movements = graphene.List(
+        BankMovementType,
+        start_date=graphene.Date(),
+        end_date=graphene.Date(),
+    )
+
 
     # Resolvers for BankMovement
     def resolve_all_bank_movements(
@@ -260,15 +266,19 @@ class Query(graphene.ObjectType):
         except ProcessedServiceListing.DoesNotExist:
             return None
 
-    def resolve_recommedation_of_movements(root, info):
+    def resolve_recommedation_of_movements(root, info, start_date=None, end_date=None):
         auth_user = get_user(info.context)
         if auth_user.is_anonymous:
             return BankMovement.objects.none()
         processed_services_amounts = ProcessedServiceListing.objects.filter(
             user=auth_user
         ).values_list('amount', flat=True)
-        queryset_recommend_bank_account_movements = BankMovement.objects.filter(amount__in=processed_services_amounts)
-        return queryset_recommend_bank_account_movements
+        queryset = BankMovement.objects.filter(amount__in=processed_services_amounts)
+        if start_date:
+            queryset = queryset.filter(accounting_date__gte=start_date)
+        if end_date:
+            queryset = queryset.filter(accounting_date__lte=end_date)
+        return queryset
 
 # Combine Query and Mutation into a single schema
 schema = graphene.Schema(query=Query, mutation=Mutation)
