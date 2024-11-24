@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import MainView from './views/MainView';
 import OnBoardingView from './views/OnBoardingView';
 import Login from './views/Login';
@@ -11,7 +11,6 @@ import CredentialRoute from './components/CredentialsRoute';
 
 function AppRoutes() {
   return (
-    <Router>
       <Routes>
         <Route
           path="/"
@@ -49,7 +48,6 @@ function AppRoutes() {
               }
           />
         </Routes>
-      </Router>
   );
 }
 

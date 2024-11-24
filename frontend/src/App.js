@@ -8,10 +8,11 @@ import { ApolloProvider } from "@apollo/client";
 import SnackbarAlert from "./components/SnackBarAlert";
 import NavBar from "./components/NavBar";
 import { Container } from "@mui/material";
+import { BrowserRouter } from 'react-router-dom';
 
 function App() {
   return (
-    <>
+    <BrowserRouter>
       <SnackbarAlert />
       <ApolloProvider client={client}>
         <ThemeProvider theme={theme}>
@@ -25,7 +26,7 @@ function App() {
           </Container>
         </ThemeProvider>
       </ApolloProvider>
-    </>
+    </BrowserRouter>
   );
 }
 

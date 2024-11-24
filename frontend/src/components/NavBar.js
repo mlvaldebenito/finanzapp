@@ -1,6 +1,7 @@
 import { AppBar, Box, Stack, Toolbar } from "@mui/material";
 import React from "react";
 import Title from "./Title";
+import LogoutButton from "./LogoutButton";
 
 const NavBar = () => {
   return (
@@ -32,7 +33,9 @@ const NavBar = () => {
               sx={{
                 ml: "auto",
               }}
-            ></Stack>
+            >
+              <LogoutButton />
+            </Stack>
           </Toolbar>
         </AppBar>
       </Box>

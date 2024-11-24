@@ -7,7 +7,6 @@ import SpeedometerGauge from '../components/speedometerGauge';
 import getSpeedometerMessage from '../helpers/speedometerMessages';
 import { useQuery } from '@apollo/client';
 import { GET_ALL_BANK_MOVEMENTS, GET_DISTINCT_RUTS_COUNT } from '../graphql/queries';
-import LogoutButton from '../components/LogoutButton';
 import useGetUser from '../hooks/useGetUser';
 import ChatInterface from '../components/chatInterface';
 import Stack from '@mui/material/Stack';
@@ -80,7 +79,7 @@ const MainView = () => {
         backgroundColor: "#ffffff",
         boxShadow:
           "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
-        borderRadius: "16px",
+        borderRadius: "24px",
         mx: "auto",
         my: 4,
         maxWidth: "1400px",
@@ -90,15 +89,15 @@ const MainView = () => {
         border: "1px solid rgba(255, 255, 255, 0.1)",
       }}
     >
-      <LogoutButton />
       {user === undefined ? (
         <Skeleton height={40} />
       ) : (
         <>
-          <Typography variant="h5" fontSize="1.6rem" align="center" gutterBottom sx={{
-            mb: 2
-          }}>
-            Resumen de ingresos de {user?.fullName}
+          <Typography variant="h3" sx={{ color: '#475569', fontWeight: 700, mb: 1 }} align="center" gutterBottom>
+            Resumen de ingresos
+          </Typography>
+          <Typography variant="h6" sx={{ color: '#64748b', mb: 3 }} align="center" gutterBottom>
+            {user?.fullName}
           </Typography>
 
           <Grid container spacing={1} sx={{ padding: 0, margin: 0 }}>
@@ -204,7 +203,7 @@ const MainView = () => {
           />
       </Paper>
 
-      <Grid container spacing={3} sx={{ mt: 4 }}>
+      {/* <Grid container spacing={3} sx={{ mt: 4 }}>
         <Grid item xs={12} sm={6} md={4}>
           <MetricsCard
             title="Transacciones último mes"
@@ -229,7 +228,7 @@ const MainView = () => {
             color="#ff9800"
           />
         </Grid>
-      </Grid>
+      </Grid> */}
 
       <Box sx={{ my: 4 }}>
         <ChatInterface />
