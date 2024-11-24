@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Button, Dialog, Typography, DialogTitle, DialogContent, Stack } from '@mui/material';
+import { Button, Dialog, Typography, DialogTitle, DialogContent, Stack, Tooltip } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import InfoIcon from '@mui/icons-material/Info';
 import Close from '@mui/icons-material/Close';
@@ -75,7 +75,13 @@ const ImageDialog = () => {
                 </IconButton>
                 </DialogTitle>
                 <DialogContent sx={{ mt: 2, px: 6 }}>
-                <Stack>
+                <Stack spacing={1}>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                    <Typography>Sube una imagen con tu lista de precios y un asistente de IA te guiará a categorizar eventuales pagos</Typography>
+                    <Tooltip title="Ejemplo" color='primary'>
+                    <InfoIcon onClick={() => {}}/>
+                    </Tooltip>
+                    </Stack>
                     <Button onClick={handleIconClick} style={{ cursor: 'pointer' }} startIcon={<FileUploadIcon />}>
                     <Input
                         type="file"

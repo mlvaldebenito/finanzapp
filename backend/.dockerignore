@@ -13,3 +13,4 @@
 !poetry_conditional.sh
 !locale
 !lib
+!data
