@@ -153,7 +153,7 @@ const MainView = () => {
       <Box sx={{ my: 2, display: "flex", justifyContent: "flex-end" }}>
         <Button
           variant="contained"
-          color="primary"
+          color="text.secondary"
           onClick={handleSendSelected}
           disabled={!selectedTransactions?.length}
           startIcon={<ReceiptIcon />}
