@@ -134,7 +134,10 @@ class Query(graphene.ObjectType):
         return None
 
     def resolve_distinct_ruts_count(root, info, start_date=None, end_date=None):
-        queryset = BankMovement.objects.filter(amount__gt=0)
+        auth_user = get_user(info.context)
+        if auth_user.is_anonymous:
+            return 0
+        queryset = BankMovement.objects.filter(bank_account__user=auth_user, amount__gt=0)
         if start_date:
             queryset = queryset.filter(accounting_date__gte=start_date)
         if end_date:

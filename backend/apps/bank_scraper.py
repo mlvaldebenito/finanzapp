@@ -128,7 +128,6 @@ class SantanderScraper:
             "x-santander-client-id": "O2XRSU4kVspEGbLDDGfFC5BOTrGKh5Ts",
             "x-schema-id": "GHOBP",
         }
-        print(bank_account)
         json_data = {
             "accountId": bank_account,
             "currency": "CLP",
