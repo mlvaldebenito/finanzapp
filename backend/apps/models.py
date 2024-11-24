@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -29,23 +30,26 @@ class BankMovement(BaseModel):
 
 
 class UserDetail(BaseModel):
-    user = models.OneToOneField(get_user_model(), on_delete=models.PROTECT, related_name="user_detail")
-    rut = models.CharField(max_length=20)
+    user = models.OneToOneField(
+        get_user_model(), on_delete=models.PROTECT, related_name="user_detail"
+    )
 
 
 class BankingCredentials(BaseModel):
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
-    bank = models.CharField(null=True, blank=True, max_length=30)
+    rut = models.CharField(max_length=20)
     password = models.CharField(null=True, blank=True, max_length=30)
+    bank = models.CharField(null=True, blank=True, max_length=30)
 
 
 class BankAccount(BaseModel):
     bank = models.CharField(null=True, blank=True, max_length=30)
     account_number = models.CharField(null=True, blank=True, max_length=30)
+    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
+    full_name = models.CharField(max_length=255)
 
 
 class ProcessedServiceListing(BaseModel):
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
     service_name = models.CharField(max_length=1000)
     amount = models.IntegerField()
-

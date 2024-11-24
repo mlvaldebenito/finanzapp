@@ -2,8 +2,8 @@ import { gql } from '@apollo/client';
 
 // Query for all bank movements
 export const GET_ALL_BANK_MOVEMENTS = gql`
-  query GetAllBankMovements {
-    allBankMovements {
+  query GetAllBankMovements($startDate: Date, $endDate: Date) {
+    allBankMovements(startDate: $startDate, endDate: $endDate) {
       id
       amount
       accountingDate
@@ -11,6 +11,14 @@ export const GET_ALL_BANK_MOVEMENTS = gql`
     }
   }
 `;
+
+// Query for count of distinct RUTs
+export const GET_DISTINCT_RUTS_COUNT = gql`
+  query getDistinctRutsCount($startDate: Date, $endDate: Date) {
+    distinctRutsCount(startDate: $startDate, endDate: $endDate)
+  }
+`;
+
 
 // Query for a single bank movement by ID
 export const GET_BANK_MOVEMENT = gql`
@@ -25,7 +33,7 @@ export const GET_BANK_MOVEMENT = gql`
 // Query for all bank accounts
 export const GET_ALL_BANK_ACCOUNTS = gql`
   query GetAllBankAccounts {
-    allBankAccounts {
+    allBankAccounts{
       id
       accountNumber
       bankName
@@ -80,7 +88,6 @@ export const GET_ALL_USER_DETAILS = gql`
   }
 `;
 
-// Query for a single user detail by ID
 export const GET_USER_DETAIL = gql`
   query GetUserDetail($id: Int!) {
     userDetail(id: $id) {
@@ -90,6 +97,17 @@ export const GET_USER_DETAIL = gql`
         id
         username
       }
+    }
+  }
+`;
+
+export const GET_USER = gql`
+  query getUser {
+    getUser {
+      id
+      username
+      hasBankCredentials
+      fullName
     }
   }
 `;

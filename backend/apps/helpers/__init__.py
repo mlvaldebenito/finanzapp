@@ -1,0 +1,1 @@
+from .get_master_entity_from_description import retrieve_national_identifier_from_description
