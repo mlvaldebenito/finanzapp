@@ -47,7 +47,7 @@ const Login = () => {
       if (data?.tokenAuth?.token) {
         localStorage.setItem("refreshToken", data.tokenAuth.token);
         refreshTokenVar(data.tokenAuth.token);
-        navigate("/main");
+        navigate('/register-credentials');
       }
     },
     onError: () => {

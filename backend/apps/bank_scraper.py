@@ -44,10 +44,7 @@ class SantanderScraper:
         )
         json_response = response.json()
         # Handle potential errors in the response
-        if (
-            response.status_code != 200
-            or json_response.get("message", None) == "Usuario o contraseña incorrectos"
-        ):
+        if response.status_code != 200:
             raise Exception(
                 f"Error fetching tokens: {response.status_code}, {response.text}"
             )
@@ -187,8 +184,6 @@ class SantanderClient:
         to_create = []
         user = banking_credentials.user
         for account_detail in client_accounts:
-            print("account_detail")
-            print(account_detail)
             account_number = (
                 f"{account_detail['OFICINACONTRATO']}{account_detail['NUMEROCONTRATO']}"
             )
