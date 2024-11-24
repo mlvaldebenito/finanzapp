@@ -1,4 +1,5 @@
 import os
+import base64
 
 from django.contrib import admin
 
@@ -15,6 +16,7 @@ from apps.models import (
 )  # Replace 'apps' with your actual app name
 
 from .bedrock_chat import BedRockLLM
+from .openai_chat import OpenAIService
 
 class ExtraParam(ActionForm):
     query = CharField(required=False)
@@ -63,28 +65,14 @@ class BankAccountAdmin(admin.ModelAdmin):
         query=request.POST["query"]
         
         # Crear instancia de BedRock (usando el rol IAM)
-        llm = BedRockLLM(
-            model_id="anthropic.claude-v2",
-            temperature=0.7,
-            max_tokens=500
-        )
+        open_ai_service = OpenAIService()
         
         try:
-            # Ver modelos disponibles
-            print("Modelos disponibles:", llm.get_available_models())
+            with open('/code/apps/data/example_01.png', 'rb') as image_file:
+                encoded_image = base64.b64encode(image_file.read()).decode()
             
-            # Hacer una pregunta
-            prompt = "¿Cuáles son los principios básicos de la programación orientada a objetos?"
-            respuesta = llm.chat(prompt)
-            print("\nRespuesta:", respuesta)
-            
-            # Hacer otra pregunta relacionada
-            prompt_2 = "Dame un ejemplo de herencia en Python"
-            respuesta_2 = llm.chat(prompt_2)
-            print("\nRespuesta 2:", respuesta_2)
-            
-            # Ver el historial
-            print("\nHistorial:", llm.get_conversation_history())
+            response = open_ai_service.send_image_to_process_services(encoded_image=encoded_image)
+            print("Here is the text:", response[0])
             
         except Exception as e:
             print(f"Ocurrió un error: {str(e)}")

@@ -1,12 +1,16 @@
 import boto3
 import json
+import os
 from typing import Optional, Dict, Any, List
+
+from openai import OpenAI
+
 
 class BedRockLLM:
     def __init__(
         self,
-        model_id: str = "claude.3.haiku",
-        region_name: str = "us-east-2",
+        model_id: str = "claude.3.haiku", #Titan
+        region_name: str = "us-east-1",
         temperature: float = 0.7,
         max_tokens: int = 1000
     ):
@@ -28,7 +32,7 @@ class BedRockLLM:
             service_name="bedrock-runtime",
             region_name=region_name
         )
-        
+
         # Historial de conversaciones
         self.conversation_history = []
 
@@ -54,10 +58,6 @@ class BedRockLLM:
         elif "amazon.titan" in self.model_id:
             return {
                 "inputText": prompt,
-                "textGenerationConfig": {
-                    "maxTokenCount": self.max_tokens,
-                    "temperature": self.temperature,
-                }
             }
         
         elif "ai21" in self.model_id:
@@ -75,6 +75,8 @@ class BedRockLLM:
         Extrae la respuesta del modelo según el formato de cada proveedor.
         """
         response_body = json.loads(response.get('body').read())
+
+        print(response_body)
         
         if "anthropic.claude" in self.model_id:
             return response_body.get('completion', '')
@@ -83,6 +85,7 @@ class BedRockLLM:
             return response_body.get('generation', '')
         
         elif "amazon.titan" in self.model_id:
+            print(response_body)
             return response_body.get('results', [{}])[0].get('outputText', '')
         
         elif "ai21" in self.model_id:
@@ -91,50 +94,6 @@ class BedRockLLM:
         else:
             raise ValueError(f"Modelo no soportado: {self.model_id}")
 
-    def chat(
-        self, 
-        prompt: str,
-        store_history: bool = True
-    ) -> str:
-        """
-        Envía un mensaje al modelo y recibe su respuesta.
-        
-        Args:
-            prompt (str): Texto de entrada para el modelo
-            store_history (bool): Si se debe almacenar el histórico
-        
-        Returns:
-            str: Respuesta del modelo
-        """
-        try:
-            # Preparar los parámetros según el modelo
-            body = self._get_model_params(prompt)
-            
-            # Invocar al modelo
-            response = self.client.invoke_model(
-                body=json.dumps(body),
-                modelId=self.model_id,
-                accept="application/json",
-                contentType="application/json"
-            )
-            
-            # Extraer la respuesta
-            response_text = self._extract_response(response)
-            
-            # Guardar en el historial si está activado
-            if store_history:
-                self.conversation_history.append({
-                    "prompt": prompt,
-                    "response": response_text
-                })
-            
-            return response_text
-            
-        except Exception as e:
-            error_msg = f"Error al invocar el modelo: {str(e)}"
-            print(error_msg)
-            raise Exception(error_msg)
-    
     def get_available_models(self) -> List[str]:
         """
         Retorna una lista de los modelos disponibles más comunes en Bedrock.
@@ -160,3 +119,51 @@ class BedRockLLM:
         Limpia el historial de la conversación.
         """
         self.conversation_history = []
+
+
+    def invoke_model(self, body, accept="application/json", content_type="application/json"):
+        result = self.client.invoke_model(
+            body=json.dumps(body),
+            modelId=self.model_id,
+            accept=accept,
+            contentType=content_type,
+        )
+        return result
+
+    def chat(
+        self, 
+        prompt: str,
+        store_history: bool = True
+    ) -> str:
+        """
+        Envía un mensaje al modelo y recibe su respuesta.
+        
+        Args:
+            prompt (str): Texto de entrada para el modelo
+            store_history (bool): Si se debe almacenar el histórico
+        
+        Returns:
+            str: Respuesta del modelo
+        """
+        try:
+            # Preparar los parámetros según el modelo
+            body = self._get_model_params(prompt)
+            
+            # Invocar al modelo
+            response = self.invoke_model(body=body)
+            
+            # Extraer la respuesta
+            response_text = self._extract_response(response)
+            
+            # Guardar en el historial si está activado
+            if store_history:
+                self.conversation_history.append({
+                    "prompt": prompt,
+                    "response": response_text
+                })
+            
+            return response_text
+            
+        except Exception as e:
+            error_msg = f"Error al invocar el modelo: {str(e)}"
+            raise Exception(error_msg)

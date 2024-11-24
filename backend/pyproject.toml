@@ -17,6 +17,7 @@ python-dotenv = "0.14.0"
 gunicorn = "20.1.0"
 uvicorn = {extras = ["standard"], version = "0.17.6"}
 django-cors-headers = "^4.6.0"
+openai = "^1.55.0"
 
 [build-system]
 requires = ["poetry-core"]
