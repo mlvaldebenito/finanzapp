@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, Container, Grid, Paper, Skeleton, Typography } from '@mui/material';
 import TransactionTable from '../components/TransactionTable';
-import MetricsCard from '../components/MetricsCard';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import SpeedometerGauge from '../components/speedometerGauge';
 import getSpeedometerMessage from '../helpers/speedometerMessages';
@@ -46,14 +45,6 @@ const MainView = () => {
 
   const transactions = data?.allBankMovements || [];
 
-  // Calculate metrics
-  const totalTransactions = transactions?.length || 0;
-  const totalAmount = transactions?.reduce((sum, t) => sum + t.amount, 0) || 0;
-  const avgTicketProbability =
-    transactions.length > 0
-      ? transactions.reduce((sum, t) => sum + (t.ticketProbability || 0), 0) /
-        transactions.length
-      : 0;
 
   const speedometerMessages = getSpeedometerMessage(
     distinctRutsData?.distinctRutsCount ?? 0
