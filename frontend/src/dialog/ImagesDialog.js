@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Button, Dialog, Typography, DialogTitle, DialogContent, Stack, Tooltip } from '@mui/material';
+import { Button, Dialog, Typography, DialogTitle, DialogContent, Stack, Tooltip, CircularProgress } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import InfoIcon from '@mui/icons-material/Info';
 import Close from '@mui/icons-material/Close';
@@ -8,27 +8,22 @@ import { UPLOAD_SALES_FILE } from '../graphql/mutations';
 import { useMutation } from '@apollo/client';
 import Input from '@mui/material/Input';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import Image from '../images/example_01.png'
 
 const ImageDialog = () => {
     const [open, setOpen] = useState(false);
-    const [uploadFile] = useMutation(UPLOAD_SALES_FILE); // Hook para la mutación
+    const [uploadFile, {loading}] = useMutation(UPLOAD_SALES_FILE); // Hook para la mutación
     const fileInputRef = useRef(null);
     const handleIconClick = () => {
         fileInputRef.current.click();
       };
-    const handleFileChange = async (event) => {
+
+    const handleFileChange = (event) => {
         const file = event.target.files[0]; // Obtén el archivo seleccionado
         if (!file) return;
-    
-        try {
-          const response = await uploadFile({
-            variables: { file },
-          });
-          console.log('Respuesta del servidor:', response.data.uploadFile);
-        } catch (error) {
-          console.error('Error subiendo archivo:', error);
-        }
+        uploadFile({ variables: { file } });
       };
+
     return (
         <>
         <Button
@@ -75,14 +70,14 @@ const ImageDialog = () => {
                 </IconButton>
                 </DialogTitle>
                 <DialogContent sx={{ mt: 2, px: 6 }}>
-                <Stack spacing={1}>
+                <Stack spacing={1} alignItems="center">
                     <Stack direction="row" spacing={1} alignItems="center">
                     <Typography>Sube una imagen con tu lista de precios y un asistente de IA te guiará a categorizar eventuales pagos</Typography>
                     <Tooltip title="Ejemplo" color='primary'>
-                    <InfoIcon onClick={() => {}}/>
+                    <InfoIcon onClick={() => window.open(Image, '_blank')} sx={{ cursor: 'pointer' }}/>
                     </Tooltip>
                     </Stack>
-                    <Button onClick={handleIconClick} style={{ cursor: 'pointer' }} startIcon={<FileUploadIcon />}>
+                    <Button onClick={handleIconClick} style={{ cursor: 'pointer', width: '40%' }} startIcon={<FileUploadIcon />}>
                     <Input
                         type="file"
                         ref={fileInputRef}
@@ -91,6 +86,12 @@ const ImageDialog = () => {
                         onChange={handleFileChange}
                     />
                     </Button>
+                {loading && (
+                    <Stack spacing={1} alignItems="center">
+                    <CircularProgress />
+                    <Typography>Estamos analizando la imagen</Typography>
+                    </Stack>
+                )}
                 </Stack>
             </DialogContent>
         </Dialog>
