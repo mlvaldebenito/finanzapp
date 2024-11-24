@@ -14,12 +14,14 @@ from apps.app_schema.types import (
     BankAccountType,
     BankingCredentialsType,
     UserDetailType,
+    ProcessedServiceListingType,
 )
 from apps.models import (
     BankMovement,
     BankAccount,
     BankingCredentials,
     UserDetail,
+    ProcessedServiceListing,
 )
 from apps.helpers import retrieve_national_identifier_from_description
 
@@ -124,6 +126,10 @@ class Query(graphene.ObjectType):
     user_detail = graphene.Field(UserDetailType, id=graphene.Int())
     get_user = graphene.Field(UserType)
 
+    # Queries for ProcessedServiceListingType
+    all_processed_service_listing = graphene.List(ProcessedServiceListingType)
+    processed_service_listing = graphene.Field(ProcessedServiceListingType, id=graphene.Int())
+
     # Resolvers for BankMovement
     def resolve_all_bank_movements(
         root, info, start_date=None, end_date=None, amount_gt=None
@@ -202,6 +208,16 @@ class Query(graphene.ObjectType):
         try:
             return UserDetail.objects.get(pk=id)
         except UserDetail.DoesNotExist:
+            return None
+
+    # Resolvers for ProcessedServiceListing
+    def resolve_all_processed_service_listing(root, info):
+        return ProcessedServiceListing.objects.all()
+    
+    def resolve_processed_service_listing(root, info):
+        try:
+            return ProcessedServiceListing.objects.get(pk=id)
+        except ProcessedServiceListing.DoesNotExist:
             return None
 
 
