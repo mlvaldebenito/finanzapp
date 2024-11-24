@@ -12,7 +12,8 @@ import TermometerLoader from '../components/termometerLoader';
 import LogoutButton from '../components/LogoutButton';
 import useGetUser from '../hooks/useGetUser';
 import ChatInterface from '../components/chatInterface';
-
+import Stack from '@mui/material/Stack';
+import ImageDialog from '../dialog/ImagesDialog';
 
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
@@ -146,6 +147,8 @@ const MainView = () => {
         </Box>
       </Box>
       <Box sx={{ my: 2, display: "flex", justifyContent: "flex-end" }}>
+        <Stack direction="row" spacing={1}>
+        <ImageDialog />
         <Button
           variant="contained"
           onClick={handleSendSelected}
@@ -163,6 +166,7 @@ const MainView = () => {
         >
           Emitir Boleta ({selectedTransactions?.length || ""})
         </Button>
+        </Stack>
       </Box>
       <Paper
         elevation={0}
