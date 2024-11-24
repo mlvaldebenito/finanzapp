@@ -63,6 +63,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "django_template.urls"
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://help.finanzapp.org',
+]
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
