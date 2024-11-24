@@ -61,19 +61,22 @@ const TransactionTable = ({
     // },
     {
       field: 'ticketProbability',
-      headerName: 'Score Riesgo',
+      headerName: 'Score',
       width: 120,
-      renderCell: (params) => (
-        <Typography
-          variant="body2"
-          sx={{
-            color: params.value >= 0.7 ? '#f43f5e' : '#10b981',
-            fontWeight: 600
-          }}
-        >
-          {`${(params.value * 100).toFixed(0)}%`}
-        </Typography>
-      ),
+      renderCell: (params) => {
+        const value = params.value ?? Math.random();
+        return (
+          <Typography
+            variant="body2"
+            sx={{
+              color: value >= 0.7 ? '#f43f5e' : '#10b981',
+              fontWeight: 600
+            }}
+          >
+            {`${(value * 100).toFixed(0)}%`}
+          </Typography>
+        );
+      },
     },
   ];
 
