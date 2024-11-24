@@ -1,8 +1,6 @@
 import requests
 
-from apps.models import BankMovement, BankAccount, BankingCredentials
-
-import requests
+from apps.models import BankMovement, BankAccount
 from urllib.parse import urlencode
 
 
@@ -12,7 +10,7 @@ class SantanderScraper:
         # Encode the data to handle special characters properly
         data = {
             "scope": "Completa",
-            "username": f"00{banking_credentials.user.user_detail.rut}",
+            "username": f"00{banking_credentials.rut}",
             "password": banking_credentials.password,
             "client_id": "4e9af62c-6563-42cd-aab6-0dd7d50a9131",
         }
@@ -44,14 +42,12 @@ class SantanderScraper:
             headers=headers,
             data=encoded_data,  # Pass the encoded data
         )
-
+        json_response = response.json()
         # Handle potential errors in the response
         if response.status_code != 200:
             raise Exception(
                 f"Error fetching tokens: {response.status_code}, {response.text}"
             )
-
-        json_response = response.json()
         return json_response["access_token"], json_response["tokenJWT"]
 
     @classmethod
@@ -105,7 +101,11 @@ class SantanderScraper:
             headers=headers,
             json=json_data,
         )
-        return response.json()["DATA"]["OUTPUT"]["MATRICES"]["MATRIZCAPTACIONES"]["e1"]
+        data_response = response.json()["DATA"]["OUTPUT"]
+        scalars = data_response["ESCALARES"]
+        full_name = f"{scalars['NOMBREPERSONA']} {scalars['APELLIDOPATERNO']} {scalars['APELLIDOMATERNO']}"
+        full_name = "".join([name.capitalize() for name in full_name.split()])
+        return data_response["MATRICES"]["MATRIZCAPTACIONES"]["e1"], full_name
 
     @classmethod
     def fetch_bank_movements(cls, access_token, bank_account):
@@ -130,7 +130,6 @@ class SantanderScraper:
             "x-santander-client-id": "O2XRSU4kVspEGbLDDGfFC5BOTrGKh5Ts",
             "x-schema-id": "GHOBP",
         }
-        print(bank_account)
         json_data = {
             "accountId": bank_account,
             "currency": "CLP",
@@ -145,14 +144,14 @@ class SantanderScraper:
         return response.json()
 
     @classmethod
-    def parse_movements(cls, json_response, account_number):
-        print(json_response)
+    def parse_movements(cls, json_response: dict, account_number, user, full_name):
         bank_account, _ = BankAccount.objects.get_or_create(
-            account_number=account_number, bank="Santander"
+            account_number=account_number,
+            bank="Santander",
+            user=user,
+            full_name=full_name,
         )
-        try:
-            movements = json_response["movements"]
-        except KeyError:
+        if not json_response.get("movements"):
             return []
         return [
             BankMovement(
@@ -180,10 +179,11 @@ class SantanderClient:
         access_token, jwt_token = SantanderScraper.fetch_login_tokens(
             banking_credentials
         )
-        client_accounts = SantanderScraper.fetch_bank_accounts(
-            jwt_token, banking_credentials.user.user_detail.rut
+        client_accounts, full_name = SantanderScraper.fetch_bank_accounts(
+            jwt_token, banking_credentials.rut
         )
         to_create = []
+        user = banking_credentials.user
         for account_detail in client_accounts:
             account_number = (
                 f"{account_detail['OFICINACONTRATO']}{account_detail['NUMEROCONTRATO']}"
@@ -191,8 +191,9 @@ class SantanderClient:
             response = SantanderScraper.fetch_bank_movements(
                 access_token, account_number
             )
-            to_create += SantanderScraper.parse_movements(response, account_number)
+            print("response 1")
+            to_create += SantanderScraper.parse_movements(
+                response, account_number, user, full_name
+            )
+            print("response 2")
         BankMovement.objects.bulk_create(to_create, ignore_conflicts=True)
-
-
-"scope=Completa&username=0019640161K&password=Rai.xxxx&client_id=4e9af62c-6563-42cd-aab6-0dd7d50a9131"

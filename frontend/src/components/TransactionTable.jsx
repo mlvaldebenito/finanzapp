@@ -8,39 +8,60 @@ const TransactionTable = ({
   transactions,
   onSelectionChange,
 }) => {
-  const columns = [
+  const mobileColumns = [
+    { 
+      field: 'observation', 
+      headerName: 'Desc.', 
+      width: 120,
+      flex: 1
+    },
+    {
+      field: 'amount',
+      headerName: 'Monto',
+      width: 100,
+      renderCell: ({row}) => {
+        const formatted = Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(row.amount);
+        return <Typography sx={{color: (row.amount < 0 ? 'red': 'green')}}>{formatted}</Typography>
+      },
+    },
+  ];
+
+  const columns = window.innerWidth <= 600 ? mobileColumns : [
     { 
       field: 'accountingDate', 
-      headerName: 'Date', 
+      headerName: 'Fecha', 
       width: 120,
     },
     { 
       field: 'observation', 
-      headerName: 'Description', 
+      headerName: 'Descripción', 
       width: 300,
       flex: 1
     },
   {
 
     field: 'amount',
-    headerName: 'Amount',
+    headerName: 'Monto',
     width: 130,
-    valueFormatter: (params) => {
-      if (params == null) return '-';
-      return new Intl.NumberFormat('en-US', {
+    renderCell: ({row}) => {
+      const formatted = Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
-      }).format(params);
+      }).format(row.amount);
+      return <Typography sx={{color: (row.amount< 0 ? 'red': 'green')}}>{formatted}</Typography>
     },
   },
-    { 
-      field: 'category', 
-      headerName: 'Category', 
-      width: 130 
-    },
+    // { 
+    //   field: 'category', 
+    //   headerName: 'Categoría', 
+    //   width: 130 
+    // },
     {
       field: 'ticketProbability',
-      headerName: 'Risk Score',
+      headerName: 'Score Riesgo',
       width: 120,
       renderCell: (params) => (
         <Typography
@@ -63,11 +84,12 @@ const TransactionTable = ({
       checkboxSelection
       disableRowSelectionOnClick
       onRowSelectionModelChange={(ids) => {
-        const selectedTransactions = transactions.filter((t) =>
+        const selectedTransactions = transactions?.filter((t) =>
           ids.includes(t.id)
-        );
+        )
         onSelectionChange(selectedTransactions);
       }}
+      isRowSelectable={({row}) => {return (row.amount > 0)}}
       initialState={{
         pagination: { paginationModel: { pageSize: 5 } },
       }}
