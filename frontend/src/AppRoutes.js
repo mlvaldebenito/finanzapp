@@ -44,8 +44,8 @@ function AppRoutes() {
             path="/register-credentials"
             element={
               <CredentialRoute>
-                <RegisterCredentials />
-                </CredentialRoute>
+              <RegisterCredentials />
+              </CredentialRoute>
               }
           />
         </Routes>
