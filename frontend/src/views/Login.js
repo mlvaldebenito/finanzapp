@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Box,
   Container,
@@ -9,16 +9,15 @@ import {
   Button,
   InputAdornment,
   CircularProgress,
-} from '@mui/material';
-import { Email, Lock, Person, PersonAdd } from '@mui/icons-material';
-import { useMutation } from '@apollo/client';
-import { REGISTER_USER, TOKEN_AUTH } from '../graphql/mutations';
-import { useNavigate } from 'react-router-dom';
-import { refreshTokenVar } from '../graphql/reactive';
+} from "@mui/material";
+import { Email, Lock, Person, PersonAdd } from "@mui/icons-material";
+import { useMutation } from "@apollo/client";
+import { REGISTER_USER, TOKEN_AUTH } from "../graphql/mutations";
+import { useNavigate } from "react-router-dom";
+import { refreshTokenVar } from "../graphql/reactive";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-
 
   return (
     <div
@@ -36,22 +35,22 @@ function TabPanel(props) {
 const Login = () => {
   const [tab, setTab] = useState(0); // 0 for login, 1 for register
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
-
 
   const [tokenAuth] = useMutation(TOKEN_AUTH, {
     onCompleted: (data) => {
       if (data?.tokenAuth?.token) {
-        localStorage.setItem('refreshToken', data.tokenAuth.token);
+        localStorage.setItem("refreshToken", data.tokenAuth.token);
         refreshTokenVar(data.tokenAuth.token);
-        navigate('/main');
+        navigate("/main");
       }
     },
     onError: (error) => {
-      console.error('Login failed', error);
+      alert(error.message);
+      console.error("Login failed", error);
     },
   });
 
@@ -64,7 +63,7 @@ const Login = () => {
     },
     onError: (error) => {
       console.error(error);
-      alert('Registration failed. Please try again.');
+      alert("Registration failed. Please try again.");
     },
   });
 
@@ -80,7 +79,7 @@ const Login = () => {
     try {
       if (tab === 1) {
         if (password !== confirmPassword) {
-          alert('Passwords do not match!');
+          alert("Passwords do not match!");
           return;
         }
 
@@ -93,7 +92,7 @@ const Login = () => {
         });
       }
     } catch (error) {
-      console.error('An error occurred:', error);
+      console.error("An error occurred:", error);
     } finally {
       setIsLoading(false);
     }
@@ -102,21 +101,21 @@ const Login = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        background: 'linear-gradient(145deg, #f1f5f9, #e2e8f0)',
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
         py: 4,
+        backgroundColor: "background.default",
       }}
     >
       <Container maxWidth="sm">
         <Paper
           elevation={8}
           sx={{
-            backdropFilter: 'blur(8px)',
-            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            backdropFilter: "blur(8px)",
+            backgroundColor: "background.default",
             borderRadius: 6,
-            overflow: 'hidden',
+            overflow: "hidden",
           }}
         >
           <Tabs
@@ -125,26 +124,29 @@ const Login = () => {
             variant="fullWidth"
             sx={{
               borderBottom: 1,
-              borderColor: 'divider',
-              '& .MuiTab-root': {
+              borderColor: "divider",
+              "& .MuiTab-root": {
                 py: 2,
+                color: "text.primary",
               },
             }}
           >
             <Tab
-              icon={<Person sx={{ mr: 1 }} />}
+              icon={<Person sx={{ color: "text.primary" }} />}
               label="Iniciar Sesión"
               iconPosition="start"
+              sx={{ color: "text.primary" }}
             />
             <Tab
-              icon={<PersonAdd sx={{ mr: 1 }} />}
+              icon={<PersonAdd sx={{ color: "text.primary" }} />}
               label="Registrarse"
               iconPosition="start"
+              sx={{ color: "text.primary" }}
             />
           </Tabs>
           <TabPanel value={tab} index={0}>
             <form onSubmit={handleSubmit}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
                 <TextField
                   required
                   fullWidth
@@ -155,7 +157,9 @@ const Login = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Email />
+                        <Email sx={{
+                          color: "text.primary"
+                        }} />
                       </InputAdornment>
                     ),
                   }}
@@ -170,7 +174,9 @@ const Login = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Lock />
+                        <Lock sx={{
+                          color: "text.primary"
+                        }} />
                       </InputAdornment>
                     ),
                   }}
@@ -183,15 +189,19 @@ const Login = () => {
                   sx={{
                     mt: 1,
                     py: 1.5,
-                    background: 'linear-gradient(145deg, #2196f3, #1976d2)',
-                    '&:hover': {
-                      background: 'linear-gradient(145deg, #1976d2, #1565c0)',
+                    color: "text.secondary",
+                    background: "linear-gradient(145deg, #2196f3, #1976d2)",
+                    "&:hover": {
+                      background: "linear-gradient(145deg, #1976d2, #1565c0)",
                     },
                   }}
                 >
                   {isLoading ? (
                     <>
-                      <CircularProgress size={24} sx={{ mr: 1 }} color="inherit" />
+                      <CircularProgress
+                        size={24}
+                        sx={{ mr: 1 }}
+                      />
                       Signing in...
                     </>
                   ) : (
@@ -207,7 +217,7 @@ const Login = () => {
 
           <TabPanel value={tab} index={1}>
             <form onSubmit={handleSubmit}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
                 <TextField
                   required
                   fullWidth
@@ -218,7 +228,9 @@ const Login = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Email />
+                        <Email sx={{
+                          color: "text.primary"
+                        }} />
                       </InputAdornment>
                     ),
                   }}
@@ -233,7 +245,9 @@ const Login = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Lock />
+                        <Lock sx={{
+                          color: "text.primary"
+                        }} />
                       </InputAdornment>
                     ),
                   }}
@@ -248,7 +262,9 @@ const Login = () => {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Lock />
+                        <Lock sx={{
+                          color: "text.primary"
+                        }} />
                       </InputAdornment>
                     ),
                   }}
@@ -261,15 +277,19 @@ const Login = () => {
                   sx={{
                     mt: 1,
                     py: 1.5,
-                    background: 'linear-gradient(145deg, #2196f3, #1976d2)',
-                    '&:hover': {
-                      background: 'linear-gradient(145deg, #1976d2, #1565c0)',
+                    background: "linear-gradient(145deg, #2196f3, #1976d2)",
+                    "&:hover": {
+                      background: "linear-gradient(145deg, #1976d2, #1565c0)",
                     },
                   }}
                 >
                   {isLoading ? (
                     <>
-                      <CircularProgress size={24} sx={{ mr: 1 }} color="inherit" />
+                      <CircularProgress
+                        size={24}
+                        sx={{ mr: 1 }}
+                        color="inherit"
+                      />
                       Creating account...
                     </>
                   ) : (

@@ -94,8 +94,8 @@ const MainView = () => {
       }}
     >
       <Stack direction="row">
-        <Typography variant="h5">
-          Hola Felipe Barría! Este es un resumen que tenemos para ti
+        <Typography variant="h1">
+          Hola! Este es un resumen que tenemos para ti
         </Typography>
         <LogoutButton />
       </Stack>
