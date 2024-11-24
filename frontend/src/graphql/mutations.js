@@ -47,3 +47,15 @@ export const REGISTER_BANK_CREDENTIALS = gql`
     }
   }
 `;
+
+
+export const SEND_MESSAGE = gql`
+  mutation SendMessage($message: String!) {
+    sendMessage(message: $message) {
+      id
+      content
+      sender
+      timestamp
+    }
+  }
+`;
