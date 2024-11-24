@@ -11,6 +11,7 @@ import useGetUser from '../hooks/useGetUser';
 import ChatInterface from '../components/chatInterface';
 import Stack from '@mui/material/Stack';
 import ImageDialog from '../dialog/ImagesDialog';
+import { keyframes } from '@mui/system';
 
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
@@ -59,6 +60,29 @@ const MainView = () => {
   );
   console.log(sixMonthsDistinctRuts);
 
+  const slideAnimation = keyframes`
+    0%, 25% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    30%, 55% {
+      transform: translateY(-33.33%);
+      opacity: 1;
+    }
+    60%, 85% {
+      transform: translateY(-66.66%);
+      opacity: 1;
+    }
+    95% {
+      transform: translateY(-66.66%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  `;
+
   // Add handler function
   const handleSendSelected = () => {
     if (!selectedTransactions.length) {
@@ -101,50 +125,70 @@ const MainView = () => {
           </Typography>
 
           <Grid container spacing={1} sx={{ padding: 0, margin: 0 }}>
-          <Grid item xs={12} md={6} sx={{
+            <Grid item xs={12} md={6} sx={{
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-          }}>
-              <Stack spacing={4}>
-                {speedometerMessages?.messages.map((message, index) => (
-                  <Stack
-                    key={index}
-                    direction="row"
-                    textAlign="start"
-                    spacing={1}
-                  >
-                    {speedometerMessages && (
-                      <speedometerMessages.icon
-                        sx={{
-                          color: speedometerMessages.color,
-                          fontSize: "1.4rem",
-                          mb: 1,
-                        }}
-                      />
-                    )}
-                    <Typography
+              order: { xs: 2, md: 1 }
+            }}>
+              <Box sx={{ 
+                minHeight: '200px', 
+                position: 'relative',
+                overflow: 'hidden',
+                width: '100%',
+                maxWidth: '800px'
+              }}>
+                <Box sx={{
+                  position: 'absolute',
+                  width: '100%',
+                  animation: `${slideAnimation} 20s infinite ease-in-out`,
+                }}>
+                  {speedometerMessages?.messages?.map((message, index) => (
+                    <Box
+                      key={index}
                       sx={{
-                        color: speedometerMessages.color,
-                        fontSize: "1.4rem",
+                        height: '80px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        my: 12,
+                        px: 3,
                       }}
                     >
-                      {speedometerMessages.messages[index]}
-                    </Typography>
-                  </Stack>
-                ))}
-              </Stack>
+                      {speedometerMessages?.icon && (
+                        <Box component={speedometerMessages.icon}
+                          sx={{
+                            color: speedometerMessages.color,
+                            fontSize: "1.6rem",
+                          }}
+                        />
+                      )}
+                      <Typography
+                        sx={{
+                          color: "#202125",
+                          fontSize: { xs: '1.25rem', sm: '1.5rem' },
+                          fontWeight: 600,
+                          textAlign: 'center',
+                          lineHeight: 1.5,
+                          letterSpacing: '0.01em',
+                          textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
+                          padding: '0.5rem',
+                          transition: 'all 0.2s ease-in-out',
+                        }}
+                      >
+                        {message}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
             </Grid>
-            <Grid
-              item
-              xs={12}
-              md={6}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
+            <Grid item xs={12} md={6} sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              order: { xs: 1, md: 2 }
+            }}>
               <Box textAlign="center">
                 <SpeedometerGauge
                   value={distinctRutsData?.distinctRutsCount ?? 0}

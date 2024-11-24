@@ -11,8 +11,8 @@ const TransactionTable = ({
   const mobileColumns = [
     { 
       field: 'observation', 
-      headerName: 'Desc.', 
-      width: 120,
+      headerName: 'Descripción', 
+      width: 100,
       flex: 1
     },
     {
@@ -22,7 +22,7 @@ const TransactionTable = ({
       renderCell: ({row}) => {
         const formatted = Intl.NumberFormat('en-US', {
           style: 'currency',
-          currency: 'USD',
+          currency: 'CLP',
         }).format(row.amount);
         return <Typography sx={{color: (row.amount < 0 ? 'red': 'green')}}>{formatted}</Typography>
       },
@@ -49,7 +49,7 @@ const TransactionTable = ({
     renderCell: ({row}) => {
       const formatted = Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'CLP',
       }).format(row.amount);
       return <Typography sx={{color: (row.amount< 0 ? 'red': 'green')}}>{formatted}</Typography>
     },
