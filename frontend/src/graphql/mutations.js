@@ -48,14 +48,11 @@ export const REGISTER_BANK_CREDENTIALS = gql`
   }
 `;
 
-
-export const SEND_MESSAGE = gql`
-  mutation SendMessage($message: String!) {
-    sendMessage(message: $message) {
-      id
-      content
-      sender
-      timestamp
+export const ASK_ACTIVITY_GUIDANCE = gql`
+  mutation AskActivityGuidance($activity_description: String!) {
+    askActivityGuidance(activity_description: $activity_description) {
+      activity
+      iva_code
     }
   }
 `;

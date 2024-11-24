@@ -1,0 +1,1 @@
+from .bedrock_chat_sii_rubro import BedRockLLM

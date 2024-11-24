@@ -2,11 +2,11 @@ import graphene
 from django.contrib.auth.models import User
 from graphene_django.types import DjangoObjectType
 import graphql_jwt
-from django.contrib.auth.models import AnonymousUser
 from apps.models import BankingCredentials
 from apps.bank_scraper import SantanderClient
-
+from apps.integrations.bedrock_chat_sii_rubro import BedRockLLM
 from django_template.middleware import get_user
+
 
 # Import types and models for your queries
 from apps.app_schema.types import (
@@ -60,6 +60,33 @@ class RegisterUser(graphene.Mutation):
     def mutate(self, info, email, password):
         user = User.objects.create_user(username=email, email=email, password=password)
         return RegisterUser(user=user)
+    
+
+class AskActivityGuidance(graphene.Mutation):
+    activity = graphene.String()
+    iva_code = graphene.String()
+
+    class Arguments:
+        activity_description = graphene.String(required=True)
+
+    def mutate(self, info, activity_description):
+        auth_user = get_user(info.context)
+        if auth_user.is_anonymous:
+            raise Exception("You must be logged in to ask for guidance")
+
+        guidance = BedRockLLM.ask_activity_guidance(activity_description)
+        print("guidance", guidance)
+        # Convert string response to list and separate activity and iva code
+        try:
+            guidance_list = eval(guidance)
+            activity, iva_code = guidance_list[0], guidance_list[1]
+            guidance = f"{activity}, {iva_code}"
+        except Exception as e:
+            print(f"Error parsing guidance: {e}")
+            guidance = "Error parsing activity guidance"
+
+        return AskActivityGuidance(activity=activity, iva_code=iva_code)
+
 
 
 class RegisterBankCredentials(graphene.Mutation):
@@ -91,6 +118,7 @@ class Mutation(graphene.ObjectType):
     refresh_token = graphql_jwt.Refresh.Field()
     register_bank_credentials = RegisterBankCredentials.Field()
 
+    ask_activity_guidance = AskActivityGuidance.Field()
 
 # Define Query class for existing queries
 

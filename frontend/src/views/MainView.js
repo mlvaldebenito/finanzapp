@@ -176,15 +176,11 @@ const MainView = () => {
           border: "1px solid rgba(255, 255, 255, 0.18)",
           borderRadius: "4px",
         }}
-      >{!allBankMovementsLoading ? (        
+      >       
         <TransactionTable
           transactions={transactions}
           onSelectionChange={setSelectedTransactions}
           />
-        ) : (
-          <TermometerLoader />
-        )
-      }
       </Paper>
       <Grid
         container

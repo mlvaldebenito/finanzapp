@@ -3,18 +3,31 @@ import { Send } from 'lucide-react';
 import { Box, Button, Container, Typography, TextField, IconButton, Stack } from '@mui/material';
 import TermometerLoader from './termometerLoader';
 import {ActivityInitiationGuidance} from './activityInitationGuidance';
+import { useMutation } from '@apollo/client';
+import { ASK_ACTIVITY_GUIDANCE } from '../graphql/mutations';
 
 const ChatInterface = () => {
   const [message, setMessage] = useState('');
-  const [statement, setStatement] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [statement, setStatement] = useState(true);
   const [showNextStep, setShowNextStep] = useState(false);
+  const [activityDetails, setActivityDetails] = useState({ activity: '', ivaCode: '' });
+  
+  const [askActivityGuidance, { loading: askActivityGuidanceLoading }] = useMutation(ASK_ACTIVITY_GUIDANCE);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    console.log("message", message);
-    setStatement(false);
+    try {
+      const { data } = await askActivityGuidance({
+        variables: { activity_description: message }
+      });
+      setActivityDetails({
+        activity: data.askActivityGuidance.activity,
+        ivaCode: data.askActivityGuidance.iva_code
+      });
+      setStatement(false);
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   const handleConfirmActivity = () => {
@@ -124,15 +137,16 @@ const ChatInterface = () => {
         alignItems: 'center',
         justifyContent: 'center'
       }}>
-        {isLoading ? (
-            <Box>
+        {askActivityGuidanceLoading ? (
+          <Box>
             <Typography variant="h4" sx={{ color: 'white', textAlign: 'center', fontWeight: 550, py: 1 }}>
-                Estamos revisando la tributación de tu rubro...
+              Estamos revisando la tributación de tu rubro...
             </Typography>
             <TermometerLoader />
           </Box>
-        ): (
+        ) : (
           showNextStep ? (
+            //TODO: ACTIVITY_TYPE DEPENDING ON THE MESSAGE
             <ActivityInitiationGuidance activityType="basicFeeBillActivity" />
           ) : (
             <Stack spacing={4}>
@@ -140,7 +154,7 @@ const ChatInterface = () => {
                     ¿Es esta tu actividad económica?
                 </Typography>
                 <Typography variant="h5" sx={{ color: 'white', textAlign: 'center', fontWeight: 500, py: 1 }}>
-                    MENSAJE_CON_EL_RUBRO
+                    {activityDetails.activity}
                 </Typography>
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 3 }}>
               <Button
