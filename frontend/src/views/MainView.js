@@ -8,7 +8,6 @@ import WarningIcon from '@mui/icons-material/Warning';
 import getSpeedometerMessage from '../helpers/speedometerMessages';
 import { useQuery } from '@apollo/client';
 import { GET_ALL_BANK_MOVEMENTS, GET_DISTINCT_RUTS_COUNT } from '../graphql/queries';
-import TermometerLoader from '../components/termometerLoader';
 import LogoutButton from '../components/LogoutButton';
 import useGetUser from '../hooks/useGetUser';
 import ChatInterface from '../components/chatInterface';
@@ -20,7 +19,7 @@ const MainView = () => {
   const user = useGetUser();
 
   // Query for all bank movements
-  const { data, loading: allBankMovementsLoading } = useQuery(GET_ALL_BANK_MOVEMENTS, {
+  const { data } = useQuery(GET_ALL_BANK_MOVEMENTS, {
     variables: {
       startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10), // 30 days ago
       endDate: new Date().toISOString().slice(0, 10) // today

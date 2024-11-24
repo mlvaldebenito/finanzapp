@@ -6,25 +6,36 @@ import {ActivityInitiationGuidance} from './activityInitationGuidance';
 import { useMutation } from '@apollo/client';
 import { ASK_ACTIVITY_GUIDANCE } from '../graphql/mutations';
 
+const ACTIVITY_TYPE_MAPPER = {
+  '1': 'basicFeeBillActivity',
+  '2': 'companyFeeBillActivity',
+  'G': 'uncertainActivity'
+};
+
+
 const ChatInterface = () => {
   const [message, setMessage] = useState('');
   const [statement, setStatement] = useState(true);
   const [showNextStep, setShowNextStep] = useState(false);
-  const [activityDetails, setActivityDetails] = useState({ activity: '', ivaCode: '' });
+  const [activityDetails, setActivityDetails] = useState({ activity: '', ivaCode: '1' });
+
   
   const [askActivityGuidance, { loading: askActivityGuidanceLoading }] = useMutation(ASK_ACTIVITY_GUIDANCE);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setStatement(false);
       const { data } = await askActivityGuidance({
-        variables: { activity_description: message }
+        variables: { activityDescription: message }
       });
       setActivityDetails({
         activity: data.askActivityGuidance.activity,
-        ivaCode: data.askActivityGuidance.iva_code
+        ivaCode: data.askActivityGuidance.ivaCode
       });
-      setStatement(false);
+      console.log("activityDetails", activityDetails);
+      console.log("activityDetails.ivaCode", activityDetails.ivaCode);
+      
     } catch (error) {
       console.error('Error:', error);
     }
@@ -96,7 +107,7 @@ const ChatInterface = () => {
                   right: '16px',
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  color: 'grey.400',
+                  color: 'white',
                   '&:hover': {
                     color: 'white',
                     bgcolor: 'rgba(255, 255, 255, 0.15)'
@@ -146,8 +157,7 @@ const ChatInterface = () => {
           </Box>
         ) : (
           showNextStep ? (
-            //TODO: ACTIVITY_TYPE DEPENDING ON THE MESSAGE
-            <ActivityInitiationGuidance activityType="basicFeeBillActivity" />
+            <ActivityInitiationGuidance activityType={ACTIVITY_TYPE_MAPPER[activityDetails.ivaCode]} />
           ) : (
             <Stack spacing={4}>
                 <Typography variant="h4" sx={{ color: 'white', textAlign: 'center', fontWeight: 550, py: 1 }}>
@@ -174,11 +184,12 @@ const ChatInterface = () => {
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
                 }}
               >
-                Sí, es correcto
+                Confirmar
               </Button>
               <Button
                 variant="contained"
                 color="error"
+                onClick={() => setStatement(true)}
                 sx={{
                   px: 4, 
                   py: 1.5,
@@ -192,7 +203,7 @@ const ChatInterface = () => {
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
                 }}
               >
-                No, es incorrecto
+                Volver a buscar
               </Button>
             </Box>
         </Stack>

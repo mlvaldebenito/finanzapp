@@ -6,7 +6,7 @@ from apps.models import BankingCredentials
 from apps.bank_scraper import SantanderClient
 from apps.integrations.bedrock_chat_sii_rubro import BedRockLLM
 from django_template.middleware import get_user
-
+from apps.helpers.read_guidline import ReadGuidance
 
 # Import types and models for your queries
 from apps.app_schema.types import (
@@ -76,16 +76,18 @@ class AskActivityGuidance(graphene.Mutation):
         if auth_user.is_anonymous:
             raise Exception("You must be logged in to ask for guidance")
 
-        guidance = BedRockLLM.ask_activity_guidance(activity_description)
-        print("guidance", guidance)
-        # Convert string response to list and separate activity and iva code
+        # Run async code in synchronous context
+        llm = BedRockLLM()
+        guidance = llm.ask_activity_guidance(activity_description)
+        print("guidance Mutation: ", guidance)
+        guidance_list = ReadGuidance().extract_guidance_list(guidance)
+        print("guidance_list Mutation: ", guidance_list)
+        
         try:
-            guidance_list = eval(guidance)
             activity, iva_code = guidance_list[0], guidance_list[1]
-            guidance = f"{activity}, {iva_code}"
         except Exception as e:
             print(f"Error parsing guidance: {e}")
-            guidance = "Error parsing activity guidance"
+            raise Exception("Error parsing activity guidance")
 
         return AskActivityGuidance(activity=activity, iva_code=iva_code)
 

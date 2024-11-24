@@ -6309,8 +6309,8 @@ class BedRockLLM:
         """
             llm.clear_conversation_history()
             respuesta = llm.chat(prompt)
-            print("\nRespuesta:", respuesta)
             return respuesta
 
         except Exception as e:
+            print("Error en ask_activity_guidance")
             print(e)
