@@ -1,9 +1,11 @@
 import { createTheme } from '@mui/material';
 
 const theme = createTheme({
+  mode: 'light', // o 'dark'
   palette: {
     primary: {
       main: '#1976d2', // A clean blue for primary actions
+      dark: '#004ba0', // A darker blue for hover states
     },
     background: {
       default: '#ffffff', // Light gray background for the main app
@@ -29,7 +31,6 @@ const theme = createTheme({
     button: {
       textTransform: 'none', // Disable uppercase styling for buttons
       fontWeight: 600,
-      color: '#ffffff', // Matches the primary color
     },
   },
   components: {

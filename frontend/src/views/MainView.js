@@ -42,7 +42,7 @@ const MainView = () => {
       endDate: new Date().toISOString().slice(0, 10) // today
     }
   });
-  if (!user?.hasBankCredentials) return navigate('/register-credentials');
+  if (user && !user?.hasBankCredentials) return navigate('/register-credentials');
 
 
   console.log("DISTINCT RUTS DATA: ", distinctRutsData);
@@ -127,12 +127,12 @@ const MainView = () => {
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                {speedometerMessage.showIcon && <WarningIcon sx={{ color: speedometerMessage.color, fontSize: '2rem' }} />}
+                {speedometerMessage.showIcon && <WarningIcon sx={{ color: speedometerMessage?.color, fontSize: '2rem' }} />}
               <Typography
                 variant="h3"
                 sx={{
                   fontWeight: 700,
-                  color: speedometerMessage.color,
+                  color: speedometerMessage?.color,
                   fontSize: '2.25rem'
                 }}
               >
@@ -143,7 +143,7 @@ const MainView = () => {
           <Typography
             variant="subtitle1"
             sx={{
-              color: speedometerMessage.color,
+              color: speedometerMessage?.color,
               mt: 1,
             }}
           >
@@ -154,7 +154,6 @@ const MainView = () => {
       <Box sx={{ my: 2, display: "flex", justifyContent: "flex-end" }}>
         <Button
           variant="contained"
-          color="text.secondary"
           onClick={handleSendSelected}
           disabled={!selectedTransactions?.length}
           startIcon={<ReceiptIcon />}

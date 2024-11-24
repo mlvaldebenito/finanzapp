@@ -84,9 +84,9 @@ const TransactionTable = ({
       checkboxSelection
       disableRowSelectionOnClick
       onRowSelectionModelChange={(ids) => {
-        const selectedTransactions = transactions.filter((t) =>
+        const selectedTransactions = transactions?.filter((t) =>
           ids.includes(t.id)
-        );
+        )
         onSelectionChange(selectedTransactions);
       }}
       initialState={{
