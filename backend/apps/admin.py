@@ -72,7 +72,6 @@ class BankAccountAdmin(admin.ModelAdmin):
                 encoded_image = base64.b64encode(image_file.read()).decode()
             
             response = open_ai_service.send_image_to_process_services(encoded_image=encoded_image)
-            print("Here is the text:", response[0])
             
         except Exception as e:
             print(f"Ocurrió un error: {str(e)}")

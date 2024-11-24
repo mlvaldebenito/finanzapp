@@ -67,7 +67,6 @@ const parseBoldText = (text) => {
 };
 
 const ActivityInitiationGuidance = ({ activityType }) => {
-  console.log("activityType", activityType);
   
   return (
     <Box sx={{

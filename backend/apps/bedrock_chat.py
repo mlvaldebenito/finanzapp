@@ -75,8 +75,6 @@ class BedRockLLM:
         Extrae la respuesta del modelo según el formato de cada proveedor.
         """
         response_body = json.loads(response.get('body').read())
-
-        print(response_body)
         
         if "anthropic.claude" in self.model_id:
             return response_body.get('completion', '')
@@ -85,7 +83,6 @@ class BedRockLLM:
             return response_body.get('generation', '')
         
         elif "amazon.titan" in self.model_id:
-            print(response_body)
             return response_body.get('results', [{}])[0].get('outputText', '')
         
         elif "ai21" in self.model_id:

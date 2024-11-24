@@ -58,7 +58,6 @@ const MainView = () => {
   const speedometerMessages = getSpeedometerMessage(
     distinctRutsData?.distinctRutsCount ?? 0
   );
-  console.log(sixMonthsDistinctRuts);
 
   const slideAnimation = keyframes`
     0%, 25% {

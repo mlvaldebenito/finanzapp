@@ -33,8 +33,6 @@ const ChatInterface = () => {
         activity: data.askActivityGuidance.activity,
         ivaCode: data.askActivityGuidance.ivaCode
       });
-      console.log("activityDetails", activityDetails);
-      console.log("activityDetails.ivaCode", activityDetails.ivaCode);
       
     } catch (error) {
       console.error('Error:', error);

@@ -62,7 +62,6 @@ const Login = () => {
 
   const [registerUser] = useMutation(REGISTER_USER, {
     onCompleted: (data) => {
-      console.log(data)
       addAlert({
         message: 'Usuario registrado exitosamente',
         color: 'success',

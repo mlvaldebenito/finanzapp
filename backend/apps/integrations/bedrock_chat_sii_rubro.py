@@ -6187,7 +6187,6 @@ class BedRockLLM:
             return response_body.get('generation', '')
         
         elif "amazon.titan" in self.model_id:
-            print(response_body)
             return response_body.get('results', [{}])[0].get('outputText', '')
         
         elif "ai21" in self.model_id:
@@ -6237,7 +6236,6 @@ class BedRockLLM:
             
         except Exception as e:
             error_msg = f"Error al invocar el modelo: {str(e)}"
-            print(error_msg)
             raise Exception(error_msg)
     
     def get_available_models(self) -> List[str]:
@@ -6312,5 +6310,4 @@ class BedRockLLM:
             return respuesta
 
         except Exception as e:
-            print("Error en ask_activity_guidance")
             print(e)

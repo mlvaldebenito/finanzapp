@@ -191,9 +191,7 @@ class SantanderClient:
             response = SantanderScraper.fetch_bank_movements(
                 access_token, account_number
             )
-            print("response 1")
             to_create += SantanderScraper.parse_movements(
                 response, account_number, user, full_name
             )
-            print("response 2")
         BankMovement.objects.bulk_create(to_create, ignore_conflicts=True)
