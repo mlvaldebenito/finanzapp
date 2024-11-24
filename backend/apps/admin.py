@@ -13,6 +13,7 @@ from apps.models import (
     BankAccount,
     BankingCredentials,
     BankMovement,
+    ProcessedServiceListing,
 )  # Replace 'apps' with your actual app name
 
 from .bedrock_chat import BedRockLLM
@@ -100,3 +101,12 @@ class BankMovementAdmin(admin.ModelAdmin):
     date_hierarchy = "accounting_date"
 
 
+@admin.register(ProcessedServiceListing)
+class ProcessedServiceListingAdmin(admin.ModelAdmin):
+    list_display = (
+        "user",
+        "service_name",
+        "amount",
+    )
+
+    search_fields = ("user__username", "service_name")

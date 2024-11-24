@@ -4,12 +4,14 @@ from apps.app_schema.types import (
     BankAccountType,
     BankingCredentialsType,
     UserDetailType,
+    ProcessedServiceListingType,
 )
 from apps.models import (
     BankMovement,
     BankAccount,
     BankingCredentials,
     UserDetail,
+    ProcessedServiceListing,
 )
 
 
@@ -32,6 +34,10 @@ class Query(graphene.ObjectType):
     # Queries for UserDetail
     all_user_details = graphene.List(UserDetailType)
     user_detail = graphene.Field(UserDetailType, id=graphene.Int())
+
+    # Queries for ProcessedServiceListingType
+    all_processed_service_listing = graphene.List(ProcessedServiceListingType)
+    processed_service_listing = graphene.Field(ProcessedServiceListingType, id=graphene.Int())
 
     # Resolvers for BankMovement
     def resolve_all_bank_movements(root, info):
@@ -71,6 +77,16 @@ class Query(graphene.ObjectType):
         try:
             return UserDetail.objects.get(pk=id)
         except UserDetail.DoesNotExist:
+            return None
+
+    # Resolvers for ProcessedServiceListing
+    def resolve_all_processed_service_listing(root, info):
+        return ProcessedServiceListing.objects.all()
+    
+    def resolve_processed_service_listing(root, info):
+        try:
+            return ProcessedServiceListing.objects.get(pk=id)
+        except ProcessedServiceListing.DoesNotExist:
             return None
 
 

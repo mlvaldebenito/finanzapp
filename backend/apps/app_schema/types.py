@@ -4,6 +4,7 @@ from apps.models import (
     BankAccount,
     BankingCredentials,
     UserDetail,
+    ProcessedServiceListing,
 )
 
 
@@ -25,3 +26,7 @@ class BankingCredentialsType(DjangoObjectType):
 class UserDetailType(DjangoObjectType):
     class Meta:
         model = UserDetail
+
+class ProcessedServiceListingType(DjangoObjectType):
+    class Meta:
+        model = ProcessedServiceListing
