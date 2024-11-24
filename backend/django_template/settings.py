@@ -13,12 +13,12 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -81,7 +81,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "django_template.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -116,7 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -127,7 +125,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -143,6 +140,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # CORS configuration
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React frontend running on port 3000
+    "https://ephemeral-beijinho-4f168c.netlify.app/",
+    "http://altoque.finanzapp.org/",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -150,11 +149,17 @@ CORS_ALLOW_CREDENTIALS = True
 GRAPHENE = {
     "SCHEMA": "django_template.schema.schema",
     "MIDDLEWARE": [
-        "graphql_jwt.middleware.JSONWebTokenMiddleware",
+        "graphql_jwt.middleware.JSONWebTokenMiddleware",  # This processes the Authorization header
     ],
 }
 
 AUTHENTICATION_BACKENDS = [
-    "graphql_jwt.backends.JSONWebTokenBackend",
-    "django.contrib.auth.backends.ModelBackend",
+    "graphql_jwt.backends.JSONWebTokenBackend",  # Resolves the user from the JWT token
+    "django.contrib.auth.backends.ModelBackend",  # Default backend for Django
 ]
+
+GRAPHQL_JWT = {
+    "JWT_SECRET_KEY": SECRET_KEY,
+    "JWT_ALGORITHM": "HS256",
+    "JWT_EXPIRATION_DELTA": timedelta(days=7),
+}

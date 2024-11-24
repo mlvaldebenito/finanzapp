@@ -88,7 +88,6 @@ export const GET_ALL_USER_DETAILS = gql`
   }
 `;
 
-// Query for a single user detail by ID
 export const GET_USER_DETAIL = gql`
   query GetUserDetail($id: Int!) {
     userDetail(id: $id) {
@@ -98,6 +97,16 @@ export const GET_USER_DETAIL = gql`
         id
         username
       }
+    }
+  }
+`;
+
+export const GET_USER = gql`
+  query getUser {
+    getUser {
+      id
+      username
+      hasBankCredentials
     }
   }
 `;

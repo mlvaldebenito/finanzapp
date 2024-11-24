@@ -10,7 +10,7 @@ class SantanderScraper:
         # Encode the data to handle special characters properly
         data = {
             "scope": "Completa",
-            "username": f"00{banking_credentials.user.user_detail.rut}",
+            "username": f"00{banking_credentials.rut}",
             "password": banking_credentials.password,
             "client_id": "4e9af62c-6563-42cd-aab6-0dd7d50a9131",
         }
@@ -176,7 +176,7 @@ class SantanderClient:
             banking_credentials
         )
         client_accounts = SantanderScraper.fetch_bank_accounts(
-            jwt_token, banking_credentials.user.user_detail.rut
+            jwt_token, banking_credentials.rut
         )
         to_create = []
         user = banking_credentials.user
