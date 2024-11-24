@@ -11,7 +11,7 @@ class SantanderScraper:
         data = {
             "scope": "Completa",
             "username": f"00{banking_credentials.rut}",
-            "password": banking_credentials.password,
+            "password": banking_credentials.decrypted_password,
             "client_id": "4e9af62c-6563-42cd-aab6-0dd7d50a9131",
         }
         encoded_data = urlencode(data)  # Properly encode the data

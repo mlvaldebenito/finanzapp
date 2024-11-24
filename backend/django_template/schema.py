@@ -8,7 +8,8 @@ from apps.integrations.bedrock_chat_sii_rubro import BedRockLLM
 from django_template.middleware import get_user
 from apps.helpers.read_guidline import ReadGuidance
 from graphene_file_upload.scalars import Upload
-
+from cryptography.fernet import Fernet
+import os
 
 # Import types and models for your queries
 from apps.app_schema.types import (
@@ -26,6 +27,8 @@ from apps.models import (
     ProcessedServiceListing,
 )
 from apps.helpers import retrieve_national_identifier_from_description
+
+key_str = os.getenv("ENCRYPTION_KEY")
 
 
 # Define UserType
@@ -111,8 +114,11 @@ class RegisterBankCredentials(graphene.Mutation):
 
     def mutate(self, info, rut, password):
         auth_user = get_user(info.context)
+        f = Fernet(key_str.encode())
+        str_bytes = password.encode()
+        encrypted_password = f.encrypt(str_bytes).decode()
         credentials = BankingCredentials.objects.create(
-            user=auth_user, rut=rut, password=password, bank="Santander"
+            user=auth_user, rut=rut, password=encrypted_password, bank="Santander"
         )
         SantanderClient.obtain_movements(credentials)
         return RegisterBankCredentials(bank_credentials=credentials)
