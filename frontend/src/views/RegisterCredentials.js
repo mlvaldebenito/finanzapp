@@ -39,10 +39,10 @@ const RegisterCredentials = () => {
     onCompleted: () => navigate('/main'),
     onError: () => {
       addAlert({
-        message: 'Formulario Ingresado Correctamente',
-        severity: 'success',
+        message: 'Error Ingresando Credenciales del Banco',
+        color: 'error',
         show: true,
-        timeout: 10000,
+        timeout: 1000,
       });
     } 
   })
