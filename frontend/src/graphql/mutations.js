@@ -49,10 +49,10 @@ export const REGISTER_BANK_CREDENTIALS = gql`
 `;
 
 export const ASK_ACTIVITY_GUIDANCE = gql`
-  mutation AskActivityGuidance($activity_description: String!) {
-    askActivityGuidance(activity_description: $activity_description) {
+  mutation AskActivityGuidance($activityDescription: String!) {
+    askActivityGuidance(activityDescription: $activityDescription) {
       activity
-      iva_code
+      ivaCode
     }
   }
 `;
