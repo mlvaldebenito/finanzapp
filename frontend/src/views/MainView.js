@@ -53,7 +53,7 @@ const MainView = () => {
   const avgTicketProbability = transactions?.length
     ? transactions.reduce((sum, t) => sum + (t.ticketProbability || 0), 0) /
       totalTransactions
-    :  0;
+    : 0;
 
   const speedometerMessage = getSpeedometerMessage(
     incomeTransactions?.length ?? 0
