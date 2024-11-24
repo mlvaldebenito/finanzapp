@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Container, Grid, Paper, Typography } from '@mui/material';
+import { Box, Button, Container, Grid, Paper, Skeleton, Typography } from '@mui/material';
 import TransactionTable from '../components/TransactionTable';
 import MetricsCard from '../components/MetricsCard';
 import ReceiptIcon from '@mui/icons-material/Receipt';
@@ -88,10 +88,11 @@ const MainView = () => {
         backdropFilter: "blur(8px)",
         border: "1px solid rgba(255, 255, 255, 0.1)",
       }}
-    >
+    >{user === undefined ? <Skeleton height={40} /> : (
       <Typography variant="h5" alignSelf={"center"}>
         Hola {user?.fullName} Este es un resumen que tenemos para ti
       </Typography>
+      )}
       <LogoutButton />
       <Box
           sx={{
