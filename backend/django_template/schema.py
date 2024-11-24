@@ -2,11 +2,12 @@ import graphene
 from django.contrib.auth.models import User
 from graphene_django.types import DjangoObjectType
 import graphql_jwt
-from django.contrib.auth.models import AnonymousUser
 from apps.models import BankingCredentials
 from apps.bank_scraper import SantanderClient
-
+from apps.integrations.bedrock_chat_sii_rubro import BedRockLLM
 from django_template.middleware import get_user
+from graphene_file_upload.scalars import Upload
+
 
 # Import types and models for your queries
 from apps.app_schema.types import (
@@ -14,12 +15,14 @@ from apps.app_schema.types import (
     BankAccountType,
     BankingCredentialsType,
     UserDetailType,
+    ProcessedServiceListingType,
 )
 from apps.models import (
     BankMovement,
     BankAccount,
     BankingCredentials,
     UserDetail,
+    ProcessedServiceListing,
 )
 from apps.helpers import retrieve_national_identifier_from_description
 
@@ -62,6 +65,44 @@ class RegisterUser(graphene.Mutation):
         return RegisterUser(user=user)
 
 
+class UploadFile(graphene.Mutation):
+    result = graphene.List(UserType)
+
+    class Arguments:
+        file = Upload(required=True)
+
+    def mutate(self, info, file):
+        print(file)
+        return
+
+
+class AskActivityGuidance(graphene.Mutation):
+    activity = graphene.String()
+    iva_code = graphene.String()
+
+    class Arguments:
+        activity_description = graphene.String(required=True)
+
+    def mutate(self, info, activity_description):
+        auth_user = get_user(info.context)
+        if auth_user.is_anonymous:
+            raise Exception("You must be logged in to ask for guidance")
+
+        guidance = BedRockLLM.ask_activity_guidance(activity_description)
+        print("guidance", guidance)
+        # Convert string response to list and separate activity and iva code
+        try:
+            guidance_list = eval(guidance)
+            activity, iva_code = guidance_list[0], guidance_list[1]
+            guidance = f"{activity}, {iva_code}"
+        except Exception as e:
+            print(f"Error parsing guidance: {e}")
+            guidance = "Error parsing activity guidance"
+
+        return AskActivityGuidance(activity=activity, iva_code=iva_code)
+
+
+
 class RegisterBankCredentials(graphene.Mutation):
     bank_credentials = graphene.Field(BankingCredentialsType)
 
@@ -91,6 +132,7 @@ class Mutation(graphene.ObjectType):
     refresh_token = graphql_jwt.Refresh.Field()
     register_bank_credentials = RegisterBankCredentials.Field()
 
+    ask_activity_guidance = AskActivityGuidance.Field()
 
 # Define Query class for existing queries
 
@@ -123,6 +165,10 @@ class Query(graphene.ObjectType):
     all_user_details = graphene.List(UserDetailType)
     user_detail = graphene.Field(UserDetailType, id=graphene.Int())
     get_user = graphene.Field(UserType)
+
+    # Queries for ProcessedServiceListingType
+    all_processed_service_listing = graphene.List(ProcessedServiceListingType)
+    processed_service_listing = graphene.Field(ProcessedServiceListingType, id=graphene.Int())
 
     # Resolvers for BankMovement
     def resolve_all_bank_movements(
@@ -204,6 +250,25 @@ class Query(graphene.ObjectType):
         except UserDetail.DoesNotExist:
             return None
 
+    # Resolvers for ProcessedServiceListing
+    def resolve_all_processed_service_listing(root, info):
+        return ProcessedServiceListing.objects.all()
+    
+    def resolve_processed_service_listing(root, info):
+        try:
+            return ProcessedServiceListing.objects.get(pk=id)
+        except ProcessedServiceListing.DoesNotExist:
+            return None
+
+    def resolve_recommedation_of_movements(root, info):
+        auth_user = get_user(info.context)
+        if auth_user.is_anonymous:
+            return BankMovement.objects.none()
+        processed_services_amounts = ProcessedServiceListing.objects.filter(
+            user=auth_user
+        ).values_list('amount', flat=True)
+        queryset_recommend_bank_account_movements = BankMovement.objects.filter(amount__in=processed_services_amounts)
+        return queryset_recommend_bank_account_movements
 
 # Combine Query and Mutation into a single schema
 schema = graphene.Schema(query=Query, mutation=Mutation)

@@ -47,3 +47,9 @@ class BankAccount(BaseModel):
     account_number = models.CharField(null=True, blank=True, max_length=30)
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
     full_name = models.CharField(max_length=255)
+
+
+class ProcessedServiceListing(BaseModel):
+    user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
+    service_name = models.CharField(max_length=1000)
+    amount = models.IntegerField()

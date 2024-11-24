@@ -104,7 +104,7 @@ class SantanderScraper:
         data_response = response.json()["DATA"]["OUTPUT"]
         scalars = data_response["ESCALARES"]
         full_name = f"{scalars['NOMBREPERSONA']} {scalars['APELLIDOPATERNO']} {scalars['APELLIDOMATERNO']}"
-        full_name = "".join([name.capitalize() for name in full_name.split()])
+        full_name = " ".join([name.capitalize() for name in full_name.split()])
         return data_response["MATRICES"]["MATRIZCAPTACIONES"]["e1"], full_name
 
     @classmethod

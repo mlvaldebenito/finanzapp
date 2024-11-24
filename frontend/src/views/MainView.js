@@ -1,37 +1,29 @@
-import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Paper,
-  Skeleton,
-  Typography,
-  Stack,
-} from "@mui/material";
-import TransactionTable from "../components/TransactionTable";
-import MetricsCard from "../components/MetricsCard";
-import ReceiptIcon from "@mui/icons-material/Receipt";
-import SpeedometerGauge from "../components/speedometerGauge";
-import getSpeedometerMessage from "../helpers/speedometerMessages";
-import { useQuery } from "@apollo/client";
-import {
-  GET_ALL_BANK_MOVEMENTS,
-  GET_DISTINCT_RUTS_COUNT,
-} from "../graphql/queries";
-import TermometerLoader from "../components/termometerLoader";
-import LogoutButton from "../components/LogoutButton";
-import useGetUser from "../hooks/useGetUser";
-import ChatInterface from "../components/chatInterface";
+import React, { useState } from 'react';
+import { Box, Button, Container, Grid, Paper, Skeleton, Typography } from '@mui/material';
+import TransactionTable from '../components/TransactionTable';
+import MetricsCard from '../components/MetricsCard';
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import SpeedometerGauge from '../components/speedometerGauge';
+import getSpeedometerMessage from '../helpers/speedometerMessages';
+import { useQuery } from '@apollo/client';
+import { GET_ALL_BANK_MOVEMENTS, GET_DISTINCT_RUTS_COUNT } from '../graphql/queries';
+import LogoutButton from '../components/LogoutButton';
+import useGetUser from '../hooks/useGetUser';
+import ChatInterface from '../components/chatInterface';
+import Stack from '@mui/material/Stack';
+import ImageDialog from '../dialog/ImagesDialog';
 
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
   const user = useGetUser();
 
   // Query for all bank movements
-  const { data, loading: allBankMovementsLoading } = useQuery(
-    GET_ALL_BANK_MOVEMENTS
-  );
+  const { data } = useQuery(GET_ALL_BANK_MOVEMENTS, {
+    variables: {
+      startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10), // 30 days ago
+      endDate: new Date().toISOString().slice(0, 10) // today
+    }
+  });
 
   const { data: distinctRutsData } = useQuery(GET_DISTINCT_RUTS_COUNT, {
     variables: {
@@ -172,6 +164,8 @@ const MainView = () => {
       )}
 
       <Box sx={{ my: 2, display: "flex", justifyContent: "flex-end" }}>
+        <Stack direction="row" spacing={1}>
+        <ImageDialog />
         <Button
           variant="contained"
           onClick={handleSendSelected}
@@ -189,6 +183,7 @@ const MainView = () => {
         >
           Emitir Boleta ({selectedTransactions?.length || ""})
         </Button>
+        </Stack>
       </Box>
       <Paper
         elevation={0}
@@ -201,15 +196,11 @@ const MainView = () => {
           border: "1px solid rgba(255, 255, 255, 0.18)",
           borderRadius: "4px",
         }}
-      >
-        {!allBankMovementsLoading ? (
-          <TransactionTable
-            transactions={transactions}
-            onSelectionChange={setSelectedTransactions}
+      >       
+        <TransactionTable
+          transactions={transactions}
+          onSelectionChange={setSelectedTransactions}
           />
-        ) : (
-          <TermometerLoader />
-        )}
       </Paper>
 
       <Grid container spacing={3} sx={{ mt: 4 }}>
