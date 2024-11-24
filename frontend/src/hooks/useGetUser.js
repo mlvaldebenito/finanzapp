@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { useEffect } from 'react';
-import { GET_USER } from '../graphql/querys';
+import { GET_USER } from '../graphql/queries';
 import useIsLogged from './useIsLogged';
 
 const useGetUser = (onCompleted = () => {}) => {

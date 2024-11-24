@@ -17,7 +17,6 @@ const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
   const user = useGetUser()
   const navigate = useNavigate();
-  if (!user?.hasBankCredentials) return navigate('/register-credentials');
 
   // Query for all bank movements
   const { data, loading: allBankMovementsLoading } = useQuery(GET_ALL_BANK_MOVEMENTS, {
@@ -40,6 +39,8 @@ const MainView = () => {
       endDate: new Date().toISOString().slice(0, 10) // today
     }
   });
+  if (!user?.hasBankCredentials) return navigate('/register-credentials');
+
 
   console.log("DISTINCT RUTS DATA: ", distinctRutsData);
   console.log("SIX MONTHS DISTINCT RUTS DATA: ", sixMonthsDistinctRuts);

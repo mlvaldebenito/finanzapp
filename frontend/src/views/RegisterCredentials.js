@@ -17,7 +17,7 @@ import {
   Lock,
   Person,
 } from '@mui/icons-material';
-import { GET_USER } from '../graphql/querys';
+import { GET_USER } from '../graphql/queries';
 import { REGISTER_BANK_CREDENTIALS } from '../graphql/mutations';
 import { useMutation } from '@apollo/client';
 import { prettifyRut, removeSeparators } from 'react-rut-formatter';
