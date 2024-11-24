@@ -21,6 +21,14 @@ function AppRoutes() {
               </PublicRoute>
             }
           />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
           <Route path="/onboarding" element={<OnBoardingView />} />
 
           {/* Protected Routes */}
