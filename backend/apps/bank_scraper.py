@@ -164,6 +164,7 @@ class SantanderScraper:
                 bank_account=bank_account,
             )
             for mov in json_response["movements"]
+            if "FINGO" not in mov.get("observacion", "")
         ]
 
     @classmethod

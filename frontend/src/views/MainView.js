@@ -46,14 +46,6 @@ const MainView = () => {
     },
   });
 
-  const { data: sixMonthsDistinctRuts } = useQuery(GET_DISTINCT_RUTS_COUNT, {
-    variables: {
-      startDate: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000)
-        .toISOString()
-        .slice(0, 10),
-      endDate: new Date().toISOString().slice(0, 10),
-    },
-  });
 
   const transactions = data?.allBankMovements || [];
 
