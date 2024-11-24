@@ -38,7 +38,7 @@ class UserDetail(BaseModel):
 class BankingCredentials(BaseModel):
     user = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
     rut = models.CharField(max_length=20)
-    password = models.CharField(null=True, blank=True, max_length=30)
+    password = models.CharField(null=True, blank=True, max_length=300)
     bank = models.CharField(null=True, blank=True, max_length=30)
 
 
