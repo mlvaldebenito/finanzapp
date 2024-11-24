@@ -5,7 +5,6 @@ import { Button } from '@mui/material';
 
 const LogoutButton = () => {
   const navigate = useNavigate();
-
   const handleLogout = () => {
     localStorage.removeItem('refreshToken'); 
     refreshTokenVar(null); 

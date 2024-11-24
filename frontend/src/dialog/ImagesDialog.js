@@ -6,7 +6,6 @@ import Close from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 import { UPLOAD_SALES_FILE } from '../graphql/mutations';
 import { useMutation } from '@apollo/client';
-import Input from '@mui/material/Input';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import Image from '../images/example_01.png'
 
