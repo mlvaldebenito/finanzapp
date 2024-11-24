@@ -8,7 +8,7 @@ const PublicRoute = ({ children }) => {
   const user = useGetUser()
   if (!isLogged) return children;
   if (user && !user.hasBankCredentials) return <Navigate to="/register-credentials" replace />;
-  return <Navigate to="/main" replace />;
+  return <Navigate to="/register-credentials" replace />;
 };
 
 export default PublicRoute;
