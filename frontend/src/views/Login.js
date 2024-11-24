@@ -121,7 +121,6 @@ const Login = () => {
         display: "flex",
         alignItems: "center",
         py: 4,
-        backgroundColor: "background.default",
       }}
     >
       <Container maxWidth="sm">

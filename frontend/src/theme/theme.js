@@ -13,6 +13,8 @@ const theme = createTheme({
     background: {
       default: '#ffffff', // Light gray background for the main app
       paper: '#ffffff', // Another light gray background for the paper component
+      gray: '#f5f5f5', // A slightly darker gray for the background
+
     },
     text: {
       primary: '#212121', // Dark gray for text

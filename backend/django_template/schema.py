@@ -66,14 +66,15 @@ class RegisterUser(graphene.Mutation):
 
 
 class UploadFile(graphene.Mutation):
-    result = graphene.List(UserType)
-
     class Arguments:
         file = Upload(required=True)
 
+    success = graphene.Boolean()
+
     def mutate(self, info, file):
+        print(type(file))
         print(file)
-        return
+        return UploadFile(success=True)
 
 
 class AskActivityGuidance(graphene.Mutation):
@@ -133,6 +134,7 @@ class Mutation(graphene.ObjectType):
     register_bank_credentials = RegisterBankCredentials.Field()
 
     ask_activity_guidance = AskActivityGuidance.Field()
+    upload_file = UploadFile.Field()
 
 # Define Query class for existing queries
 
