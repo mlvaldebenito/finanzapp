@@ -148,6 +148,7 @@ class Query(graphene.ObjectType):
         BankMovementType,
         start_date=graphene.Date(),
         end_date=graphene.Date(),
+        amount_gt=graphene.Boolean()
     )
     bank_movement = graphene.Field(BankMovementType, id=graphene.Int())
 

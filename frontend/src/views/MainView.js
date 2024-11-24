@@ -21,7 +21,8 @@ const MainView = () => {
   const { data } = useQuery(GET_ALL_BANK_MOVEMENTS, {
     variables: {
       startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10), // 30 days ago
-      endDate: new Date().toISOString().slice(0, 10) // today
+      endDate: new Date().toISOString().slice(0, 10), // today
+      amountGt: true
     }
   });
 

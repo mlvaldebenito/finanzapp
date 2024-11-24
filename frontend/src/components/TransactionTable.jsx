@@ -92,6 +92,9 @@ const TransactionTable = ({
       isRowSelectable={({row}) => {return (row.amount > 0)}}
       initialState={{
         pagination: { paginationModel: { pageSize: 5 } },
+        sorting: {
+          sortModel: [{ field: 'accountingDate', sort: 'desc' }],
+        },
       }}
       pageSizeOptions={[5, 10, 50, 100]}
       sx={{

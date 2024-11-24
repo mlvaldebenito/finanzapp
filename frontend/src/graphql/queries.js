@@ -2,8 +2,8 @@ import { gql } from '@apollo/client';
 
 // Query for all bank movements
 export const GET_ALL_BANK_MOVEMENTS = gql`
-  query GetAllBankMovements($startDate: Date, $endDate: Date) {
-    allBankMovements(startDate: $startDate, endDate: $endDate) {
+  query GetAllBankMovements($startDate: Date, $endDate: Date, $amountGt: Boolean) {
+    allBankMovements(startDate: $startDate, endDate: $endDate, amountGt: $amountGt) {
       id
       amount
       accountingDate
