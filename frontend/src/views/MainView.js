@@ -22,7 +22,6 @@ import ChatInterface from "../components/chatInterface";
 import Stack from "@mui/material/Stack";
 import ImageDialog from "../dialog/ImagesDialog";
 import { keyframes } from "@mui/system";
-import { Navigate } from "react-router-dom";
 
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
