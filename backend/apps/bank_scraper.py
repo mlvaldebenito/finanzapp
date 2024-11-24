@@ -42,14 +42,12 @@ class SantanderScraper:
             headers=headers,
             data=encoded_data,  # Pass the encoded data
         )
-
+        json_response = response.json()
         # Handle potential errors in the response
-        if response.status_code != 200:
+        if response.status_code != 200 or json_response['message'] == 'Usuario o contraseña incorrectos':
             raise Exception(
                 f"Error fetching tokens: {response.status_code}, {response.text}"
             )
-
-        json_response = response.json()
         return json_response["access_token"], json_response["tokenJWT"]
 
     @classmethod
@@ -103,7 +101,10 @@ class SantanderScraper:
             headers=headers,
             json=json_data,
         )
-        return response.json()["DATA"]["OUTPUT"]["MATRICES"]["MATRIZCAPTACIONES"]["e1"]
+        data_response = response.json()['DATA']['OUTPUT']
+        scalars = data_response['ESCALARES']
+        full_name = f"{scalars['NOMBREPERSONA']} {scalars['APELLIDOPATERNO']} {scalars['APELLIDOMATERNO']}"
+        return data_response["MATRICES"]["MATRIZCAPTACIONES"]["e1"], full_name
 
     @classmethod
     def fetch_bank_movements(cls, access_token, bank_account):
@@ -142,9 +143,9 @@ class SantanderScraper:
         return response.json()
 
     @classmethod
-    def parse_movements(cls, json_response: dict, account_number, user):
+    def parse_movements(cls, json_response: dict, account_number, user, full_name):
         bank_account, _ = BankAccount.objects.get_or_create(
-            account_number=account_number, bank="Santander", user=user,
+            account_number=account_number, bank="Santander", user=user, full_name=full_name,
         )
         if not json_response.get("movements"):
             return
@@ -174,17 +175,18 @@ class SantanderClient:
         access_token, jwt_token = SantanderScraper.fetch_login_tokens(
             banking_credentials
         )
-        client_accounts = SantanderScraper.fetch_bank_accounts(
+        client_accounts, full_name = SantanderScraper.fetch_bank_accounts(
             jwt_token, banking_credentials.rut
         )
         to_create = []
         user = banking_credentials.user
         for account_detail in client_accounts:
+            print(account_detail)
             account_number = (
                 f"{account_detail['OFICINACONTRATO']}{account_detail['NUMEROCONTRATO']}"
             )
             response = SantanderScraper.fetch_bank_movements(
                 access_token, account_number
             )
-            to_create += SantanderScraper.parse_movements(response, account_number, user)
+            to_create += SantanderScraper.parse_movements(response, account_number, user, full_name)
         BankMovement.objects.bulk_create(to_create, ignore_conflicts=True)

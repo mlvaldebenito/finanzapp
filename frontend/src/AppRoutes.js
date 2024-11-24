@@ -42,7 +42,11 @@ function AppRoutes() {
           />
           <Route
             path="/register-credentials"
-            element={<RegisterCredentials />}
+            element={
+              <PrivateRoute>
+                <RegisterCredentials />
+                </PrivateRoute>
+              }
           />
         </Routes>
       </Router>
