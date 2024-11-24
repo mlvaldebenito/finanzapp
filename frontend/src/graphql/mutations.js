@@ -59,3 +59,13 @@ export const SEND_MESSAGE = gql`
     }
   }
 `;
+
+export const UPLOAD_SALES_FILE = gql`
+  mutation UploadFile($file: Upload!) {
+    uploadFile(file: $file) {
+      success
+      message
+      url
+    }
+  }
+`;

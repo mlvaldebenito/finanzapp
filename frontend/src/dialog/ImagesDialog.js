@@ -1,13 +1,34 @@
-import { useState } from 'react';
-import { Button, Dialog, Typography, DialogTitle, DialogContent } from '@mui/material';
+import { useState, useRef } from 'react';
+import { Button, Dialog, Typography, DialogTitle, DialogContent, Stack } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import InfoIcon from '@mui/icons-material/Info';
 import Close from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
+import { UPLOAD_SALES_FILE } from '../graphql/mutations';
+import { useMutation } from '@apollo/client';
+import Input from '@mui/material/Input';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 
 const ImageDialog = () => {
     const [open, setOpen] = useState(false);
-    console.log('aca');
+    const [uploadFile] = useMutation(UPLOAD_SALES_FILE); // Hook para la mutación
+    const fileInputRef = useRef(null);
+    const handleIconClick = () => {
+        fileInputRef.current.click();
+      };
+    const handleFileChange = async (event) => {
+        const file = event.target.files[0]; // Obtén el archivo seleccionado
+        if (!file) return;
+    
+        try {
+          const response = await uploadFile({
+            variables: { file },
+          });
+          console.log('Respuesta del servidor:', response.data.uploadFile);
+        } catch (error) {
+          console.error('Error subiendo archivo:', error);
+        }
+      };
     return (
         <>
         <Button
@@ -52,9 +73,19 @@ const ImageDialog = () => {
                 >
                 <Close />
                 </IconButton>
-            </DialogTitle>
-            <DialogContent sx={{ mt: 2, px: 6 }}>
-                <Typography>asfas</Typography>
+                </DialogTitle>
+                <DialogContent sx={{ mt: 2, px: 6 }}>
+                <Stack>
+                    <Button onClick={handleIconClick} style={{ cursor: 'pointer' }} startIcon={<FileUploadIcon />}>
+                    <Input
+                        type="file"
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                        accept="image/jpeg, image/png, image/gif, image/webp"
+                        onChange={handleFileChange}
+                    />
+                    </Button>
+                </Stack>
             </DialogContent>
         </Dialog>
         </>
