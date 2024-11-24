@@ -11,18 +11,14 @@ import Image from '../images/example_01.png'
 
 const ImageDialog = () => {
     const [open, setOpen] = useState(false);
-    const [uploadFile, {loading}] = useMutation(UPLOAD_SALES_FILE); // Hook para la mutación
+    const [uploadDocument, setUploadDocument] = useState(null);
+    const [uploadFile, {loading}] = useMutation(UPLOAD_SALES_FILE, {
+        variables: {file: uploadDocument},
+    }); // Hook para la mutación
     const fileInputRef = useRef(null);
     const handleIconClick = () => {
         fileInputRef.current.click();
       };
-
-    const handleFileChange = (event) => {
-        const file = event.target.files[0]; // Obtén el archivo seleccionado
-        if (!file) return;
-        uploadFile({ variables: { file } });
-      };
-
     return (
         <>
         <Button
@@ -77,17 +73,21 @@ const ImageDialog = () => {
                     </Tooltip>
                     </Stack>
                     <div>
-                        <Button onClick={handleIconClick} style={{ cursor: 'pointer', width: '40%' }} startIcon={<FileUploadIcon />}>
+                        <Button onClick={handleIconClick} style={{ cursor: 'pointer' }} startIcon={<FileUploadIcon />}>
+                        Adjuntar
                         <input
                             type="file"
                             ref={fileInputRef}
                             style={{ display: 'none' }}
-                            accept="image/jpeg, image/png, image/gif, image/webp"
-                            onChange={handleFileChange}
-                            multiple
+                            // accept="image/jpeg, image/png, image/gif, image/webp"
+                            onChange={(e) => setUploadDocument(e.target.files[0])}
                             />
+                        {uploadDocument && <InfoIcon />}
                         </Button>
                     </div>
+                    <Button onClick={uploadFile}>
+                        Subir
+                    </Button>
                 {loading && (
                     <Stack spacing={1} alignItems="center">
                     <CircularProgress />
