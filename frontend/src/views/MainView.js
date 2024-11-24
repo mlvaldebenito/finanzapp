@@ -11,6 +11,7 @@ import { GET_ALL_BANK_MOVEMENTS } from "../graphql/querys";
 import LogoutButton from "../components/LogoutButton";
 import useGetUser from "../hooks/useGetUser";
 import { useNavigate } from "react-router-dom";
+import Stack from "@mui/material/Stack";
 
 
 const MainView = () => {
@@ -69,7 +70,12 @@ const MainView = () => {
         border: "1px solid rgba(255, 255, 255, 0.1)",
       }}
     >
-      <LogoutButton />
+      <Stack direction="row">
+        <Typography variant="h5">
+          Hola Felipe Barría! Este es un resumen que tenemos para ti
+        </Typography>
+        <LogoutButton />
+      </Stack>
       <Box
         sx={{
           maxWidth: "4xl",
