@@ -13,6 +13,7 @@ import LogoutButton from '../components/LogoutButton';
 import useGetUser from '../hooks/useGetUser';
 import { useNavigate } from 'react-router-dom';
 import Stack from "@mui/material/Stack";
+import ChatInterface from '../components/chatInterface';
 
 
 const MainView = () => {
@@ -126,7 +127,7 @@ const MainView = () => {
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                <WarningIcon sx={{ color: speedometerMessage.color, fontSize: '2rem' }} />
+                {speedometerMessage.showIcon && <WarningIcon sx={{ color: speedometerMessage.color, fontSize: '2rem' }} />}
               <Typography
                 variant="h3"
                 sx={{
@@ -242,6 +243,9 @@ const MainView = () => {
           />
         </Grid>
       </Grid>
+      <Box sx={{ my: 4 }}>
+        <ChatInterface />
+      </Box>
     </Container>
   );
 };

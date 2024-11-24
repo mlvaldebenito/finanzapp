@@ -11,10 +11,11 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { Email, Lock, Person, PersonAdd } from "@mui/icons-material";
-import { useMutation } from "@apollo/client";
 import { REGISTER_USER, TOKEN_AUTH } from "../graphql/mutations";
-import { useNavigate } from "react-router-dom";
 import { refreshTokenVar } from "../graphql/reactive";
+import { useMutation } from '@apollo/client';
+import { useNavigate } from 'react-router-dom';
+import useSnackBars from '../hooks/useSnackBar';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -33,6 +34,7 @@ function TabPanel(props) {
 }
 
 const Login = () => {
+  const { addAlert } = useSnackBars();
   const [tab, setTab] = useState(0); // 0 for login, 1 for register
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -48,22 +50,36 @@ const Login = () => {
         navigate("/main");
       }
     },
-    onError: (error) => {
-      alert(error.message);
-      console.error("Login failed", error);
+    onError: () => {
+      addAlert({
+        message: 'Credenciales Inválidas',
+        color: 'error',
+        show: true,
+        timeout: 1000,
+      });
     },
   });
 
   const [registerUser] = useMutation(REGISTER_USER, {
     onCompleted: (data) => {
-      if (data?.registerUser?.user) {
-        alert(`Account created for ${data.registerUser.user.email}`);
-        setTab(0);
-      }
+      console.log(data)
+      addAlert({
+        message: 'Usuario registrado exitosamente',
+        color: 'success',
+        show: true,
+        timeout: 1000,
+      });
+      tokenAuth({
+        variables: { email, password },
+      });
     },
-    onError: (error) => {
-      console.error(error);
-      alert("Registration failed. Please try again.");
+    onError: () => {
+      addAlert({
+        message: 'Error en el registro. Por favor intente nuevamente',
+        color: 'error',
+        show: true,
+        timeout: 1000,
+      });
     },
   });
 

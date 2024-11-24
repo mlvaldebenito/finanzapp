@@ -4,21 +4,24 @@ const getSpeedometerMessage = (value) => {
       message: "¡Límite superado!",
       subMessage: "El banco deber reportar tu información al SII!",
       severity: "error",
-      color: '#f43f5e'  
+      color: '#f43f5e',
+      showIcon: true
     };
   } else if (value >= 45) {
     return {
       message: "¡Atención a tus transferencia!",
       subMessage: "Te estás acercando al límite",
       severity: "warning",
-      color: '#FFA500'  
+      color: '#FFA500',
+      showIcon: true
     };
   } else if (value >= 35) {
     return {
       message: "Atención a tus transferencias",
       subMessage: "Te estás acercando al límite",
       severity: "warning",
-      color: '#ff9800'  
+      color: '#ff9800',
+      showIcon: true
     };
   } else if (value >= 25) {
     return {

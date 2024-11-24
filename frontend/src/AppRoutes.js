@@ -29,18 +29,25 @@ function AppRoutes() {
         />
         <Route path="/onboarding" element={<OnBoardingView />} />
 
-        {/* Protected Routes */}
-        <Route
-          path="/main"
-          element={
-            <PrivateRoute>
-              <MainView />
-            </PrivateRoute>
-          }
-        />
-        <Route path="/register-credentials" element={<RegisterCredentials />} />
-      </Routes>
-    </Router>
+          {/* Protected Routes */}
+          <Route
+            path="/main"
+            element={
+              <PrivateRoute>
+                <MainView />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/register-credentials"
+            element={
+              <PrivateRoute>
+                <RegisterCredentials />
+                </PrivateRoute>
+              }
+          />
+        </Routes>
+      </Router>
   );
 }
 
