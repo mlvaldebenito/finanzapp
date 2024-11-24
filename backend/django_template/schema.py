@@ -6,6 +6,7 @@ from apps.models import BankingCredentials
 from apps.bank_scraper import SantanderClient
 from apps.integrations.bedrock_chat_sii_rubro import BedRockLLM
 from django_template.middleware import get_user
+from graphene_file_upload.scalars import Upload
 
 
 # Import types and models for your queries
@@ -62,7 +63,18 @@ class RegisterUser(graphene.Mutation):
     def mutate(self, info, email, password):
         user = User.objects.create_user(username=email, email=email, password=password)
         return RegisterUser(user=user)
-    
+
+
+class UploadFile(graphene.Mutation):
+    result = graphene.List(UserType)
+
+    class Arguments:
+        file = Upload(required=True)
+
+    def mutate(self, info, file):
+        print(file)
+        return
+
 
 class AskActivityGuidance(graphene.Mutation):
     activity = graphene.String()

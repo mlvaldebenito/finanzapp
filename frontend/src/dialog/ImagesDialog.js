@@ -77,15 +77,18 @@ const ImageDialog = () => {
                     <InfoIcon onClick={() => window.open(Image, '_blank')} sx={{ cursor: 'pointer' }}/>
                     </Tooltip>
                     </Stack>
-                    <Button onClick={handleIconClick} style={{ cursor: 'pointer', width: '40%' }} startIcon={<FileUploadIcon />}>
-                    <Input
-                        type="file"
-                        ref={fileInputRef}
-                        style={{ display: 'none' }}
-                        accept="image/jpeg, image/png, image/gif, image/webp"
-                        onChange={handleFileChange}
-                    />
-                    </Button>
+                    <div>
+                        <Button onClick={handleIconClick} style={{ cursor: 'pointer', width: '40%' }} startIcon={<FileUploadIcon />}>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            style={{ display: 'none' }}
+                            accept="image/jpeg, image/png, image/gif, image/webp"
+                            onChange={handleFileChange}
+                            multiple
+                            />
+                        </Button>
+                    </div>
                 {loading && (
                     <Stack spacing={1} alignItems="center">
                     <CircularProgress />
