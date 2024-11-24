@@ -28,13 +28,20 @@ from apps.helpers import retrieve_national_identifier_from_description
 class UserType(DjangoObjectType):
 
     has_bank_credentials = graphene.Boolean()
+    full_name = graphene.String()
 
     class Meta:
         model = User
         fields = ("id", "username", "email")
 
-    def resolve_has_bank_credentials(self, info):
-        return BankingCredentials.objects.filter(user=self).exists()
+    @staticmethod
+    def resolve_has_bank_credentials(root, info):
+        return BankingCredentials.objects.filter(user=root).exists()
+    
+    @staticmethod
+    def resolve_full_name(root, info):
+        account = BankAccount.objects.filter(user=root).last()
+        return account and account.full_name
 
 
 class BankingCredentialsType(DjangoObjectType):

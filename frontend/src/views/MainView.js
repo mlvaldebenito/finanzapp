@@ -11,15 +11,13 @@ import { GET_ALL_BANK_MOVEMENTS, GET_DISTINCT_RUTS_COUNT } from '../graphql/quer
 import TermometerLoader from '../components/termometerLoader';
 import LogoutButton from '../components/LogoutButton';
 import useGetUser from '../hooks/useGetUser';
-import { useNavigate } from 'react-router-dom';
-import Stack from "@mui/material/Stack";
 import ChatInterface from '../components/chatInterface';
 
 
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
-  const user = useGetUser()
-  const navigate = useNavigate();
+  const user = useGetUser();
+  console.log(user)
 
   // Query for all bank movements
   const { data, loading: allBankMovementsLoading } = useQuery(GET_ALL_BANK_MOVEMENTS, {
@@ -42,7 +40,6 @@ const MainView = () => {
       endDate: new Date().toISOString().slice(0, 10) // today
     }
   });
-  if (!user?.hasBankCredentials) return navigate('/register-credentials');
 
 
   console.log("DISTINCT RUTS DATA: ", distinctRutsData);
@@ -94,13 +91,10 @@ const MainView = () => {
         border: "1px solid rgba(255, 255, 255, 0.1)",
       }}
     >
-      <Stack direction="row">
-        <Typography variant="h5">
-           {/*TODO: REMOVE*/}
-          Hola Felipe Barría! Este es un resumen que tenemos para ti
-        </Typography>
-        <LogoutButton />
-      </Stack>
+      <Typography variant="h5" alignSelf={"center"}>
+        Hola {user?.fullName} Este es un resumen que tenemos para ti
+      </Typography>
+      <LogoutButton />
       <Box
           sx={{
             maxWidth: '4xl',
