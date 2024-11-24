@@ -85,9 +85,6 @@ const MainView = () => {
     }
   };
 
-  if(user && !user.bankCredentials) {
-    return <Navigate to="/main" replace />;
-  }
 
   return (
     <Container
