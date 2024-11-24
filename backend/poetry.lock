@@ -288,6 +288,25 @@ rest-framework = ["djangorestframework (>=3.6.3)"]
 test = ["coveralls", "django-filter (>=22.1)", "djangorestframework (>=3.6.3)", "mock", "pytest (>=7.3.1)", "pytest-cov", "pytest-django (>=4.5.2)", "pytest-random-order", "pytz"]
 
 [[package]]
+name = "graphene-file-upload"
+version = "1.2.2"
+description = "Lib for adding file upload functionality to GraphQL mutations in Graphene Django and Flask-Graphql"
+optional = false
+python-versions = "*"
+files = [
+    {file = "graphene_file_upload-1.2.2-py3-none-any.whl", hash = "sha256:034ff72d2834b7aebd06fda412fa88a10aba34bac604317f7552457e47040654"},
+    {file = "graphene_file_upload-1.2.2.tar.gz", hash = "sha256:b5f47a81f5614d1184ba9480a63835769b26303cb7759316122401784858e9c7"},
+]
+
+[package.dependencies]
+six = ">=1.11.0"
+
+[package.extras]
+all = ["Flask (>=1.0.2)", "Flask-Graphql (>=2.0.0)", "graphene (>=2.1.2)", "graphene-django (>=2.0.0)"]
+django = ["graphene-django (>=2.0.0)"]
+flask = ["Flask (>=1.0.2)", "Flask-Graphql (>=2.0.0)", "graphene (>=2.1.2)"]
+
+[[package]]
 name = "graphql-core"
 version = "3.2.5"
 description = "GraphQL implementation for Python, a port of GraphQL.js, the JavaScript reference implementation for GraphQL."
@@ -1227,4 +1246,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "8179c7cc978148bad5ec8fdcfbb90ce9d88605c8f61394d10496865823854fe8"
+content-hash = "d4677cd88b90f60017ad887886e5bb437d76d5d259c3121ff319258e9aab44b9"

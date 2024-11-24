@@ -260,6 +260,15 @@ class Query(graphene.ObjectType):
         except ProcessedServiceListing.DoesNotExist:
             return None
 
+    def resolve_recommedation_of_movements(root, info):
+        auth_user = get_user(info.context)
+        if auth_user.is_anonymous:
+            return BankMovement.objects.none()
+        processed_services_amounts = ProcessedServiceListing.objects.filter(
+            user=auth_user
+        ).values_list('amount', flat=True)
+        queryset_recommend_bank_account_movements = BankMovement.objects.filter(amount__in=processed_services_amounts)
+        return queryset_recommend_bank_account_movements
 
 # Combine Query and Mutation into a single schema
 schema = graphene.Schema(query=Query, mutation=Mutation)
