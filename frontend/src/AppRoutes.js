@@ -10,26 +10,25 @@ import RegisterCredentials from './views/RegisterCredentials';
 
 function AppRoutes() {
   return (
-      <Router>
-        <Routes>
-          {/* Public Routes */}
-          <Route
-            path="/"
-            element={
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            }
-          />
-          <Route path="/onboarding" element={<OnBoardingView />} />
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route path="/onboarding" element={<OnBoardingView />} />
 
           {/* Protected Routes */}
           <Route

@@ -28,13 +28,20 @@ from apps.helpers import retrieve_national_identifier_from_description
 class UserType(DjangoObjectType):
 
     has_bank_credentials = graphene.Boolean()
+    full_name = graphene.String()
 
     class Meta:
         model = User
         fields = ("id", "username", "email")
 
-    def resolve_has_bank_credentials(self, info):
-        return BankingCredentials.objects.filter(user=self).exists()
+    @staticmethod
+    def resolve_has_bank_credentials(root, info):
+        return BankingCredentials.objects.filter(user=root).exists()
+
+    @staticmethod
+    def resolve_full_name(root, info):
+        account = BankAccount.objects.filter(user=root).last()
+        return account and account.full_name
 
 
 class BankingCredentialsType(DjangoObjectType):
@@ -68,7 +75,9 @@ class RegisterBankCredentials(graphene.Mutation):
             user=auth_user, rut=rut, password=password, bank="Santander"
         )
         SantanderClient.obtain_movements(credentials)
-        return credentials
+        print("Obtained movements")
+        print("credentials", credentials)
+        return RegisterBankCredentials(bank_credentials=credentials)
 
 
 # Define the Mutation class
@@ -95,11 +104,12 @@ class Query(graphene.ObjectType):
         BankMovementType,
         start_date=graphene.Date(),
         end_date=graphene.Date(),
-
     )
     bank_movement = graphene.Field(BankMovementType, id=graphene.Int())
 
-    distinct_ruts_count = graphene.Int(start_date=graphene.Date(), end_date=graphene.Date())
+    distinct_ruts_count = graphene.Int(
+        start_date=graphene.Date(), end_date=graphene.Date()
+    )
 
     # Queries for BankAccount
     all_bank_accounts = graphene.List(BankAccountType)
@@ -115,18 +125,22 @@ class Query(graphene.ObjectType):
     get_user = graphene.Field(UserType)
 
     # Resolvers for BankMovement
-    def resolve_all_bank_movements(root, info, start_date=None, end_date=None):
+    def resolve_all_bank_movements(
+        root, info, start_date=None, end_date=None, amount_gt=None
+    ):
         auth_user = get_user(info.context)
         if auth_user.is_anonymous:
             return BankMovement.objects.none()
 
-        queryset = BankMovement.objects.filter(bank_account__user=auth_user, amount__gt=0)
+        queryset = BankMovement.objects.filter(bank_account__user=auth_user)
+        if amount_gt:
+            queryset = queryset.filter(amount__gt=0)
         if start_date:
             queryset = queryset.filter(accounting_date__gte=start_date)
         if end_date:
             queryset = queryset.filter(accounting_date__lte=end_date)
         return queryset
-    
+
     def resolve_get_user(self, info):
         user = get_user(info.context)
         if user.is_authenticated:
@@ -137,19 +151,23 @@ class Query(graphene.ObjectType):
         auth_user = get_user(info.context)
         if auth_user.is_anonymous:
             return 0
-        queryset = BankMovement.objects.filter(bank_account__user=auth_user, amount__gt=0)
+        queryset = BankMovement.objects.filter(
+            bank_account__user=auth_user, amount__gt=0
+        )
         if start_date:
             queryset = queryset.filter(accounting_date__gte=start_date)
         if end_date:
             queryset = queryset.filter(accounting_date__lte=end_date)
-        
-        observations = list(queryset.values_list('observation', flat=True))
+
+        observations = list(queryset.values_list("observation", flat=True))
         national_identifiers = [
-            identifier.rut for obs in observations
-            if (identifier := retrieve_national_identifier_from_description(obs)) is not None
+            identifier.rut
+            for obs in observations
+            if (identifier := retrieve_national_identifier_from_description(obs))
+            is not None
         ]
         return len(set(national_identifiers[0]))
-    
+
     def resolve_bank_movement(root, info, id):
         try:
             return BankMovement.objects.get(pk=id)

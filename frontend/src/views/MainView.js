@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Container, Grid, Paper, Typography } from '@mui/material';
+import { Box, Button, Container, Grid, Paper, Skeleton, Typography } from '@mui/material';
 import TransactionTable from '../components/TransactionTable';
 import MetricsCard from '../components/MetricsCard';
 import ReceiptIcon from '@mui/icons-material/Receipt';
@@ -11,22 +11,19 @@ import { GET_ALL_BANK_MOVEMENTS, GET_DISTINCT_RUTS_COUNT } from '../graphql/quer
 import TermometerLoader from '../components/termometerLoader';
 import LogoutButton from '../components/LogoutButton';
 import useGetUser from '../hooks/useGetUser';
-import { useNavigate } from 'react-router-dom';
-import Stack from "@mui/material/Stack";
 import ChatInterface from '../components/chatInterface';
 
 
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
-  const user = useGetUser()
-  const navigate = useNavigate();
+  const user = useGetUser();
 
   // Query for all bank movements
   const { data, loading: allBankMovementsLoading } = useQuery(GET_ALL_BANK_MOVEMENTS, {
-    variables: {
-      startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10), // 30 days ago
-      endDate: new Date().toISOString().slice(0, 10) // today
-    }
+    // variables: {
+    //   startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10), // 30 days ago
+    //   endDate: new Date().toISOString().slice(0, 10) // today
+    // }
   });
 
   const { data: distinctRutsData } = useQuery(GET_DISTINCT_RUTS_COUNT, {
@@ -42,8 +39,6 @@ const MainView = () => {
       endDate: new Date().toISOString().slice(0, 10) // today
     }
   });
-  if (!user?.hasBankCredentials) return navigate('/register-credentials');
-
 
   console.log("DISTINCT RUTS DATA: ", distinctRutsData);
   console.log("SIX MONTHS DISTINCT RUTS DATA: ", sixMonthsDistinctRuts);
@@ -93,14 +88,12 @@ const MainView = () => {
         backdropFilter: "blur(8px)",
         border: "1px solid rgba(255, 255, 255, 0.1)",
       }}
-    >
-      <Stack direction="row">
-        <Typography variant="h5">
-           {/*TODO: REMOVE*/}
-          Hola Felipe Barría! Este es un resumen que tenemos para ti
-        </Typography>
-        <LogoutButton />
-      </Stack>
+    >{user === undefined ? <Skeleton height={40} /> : (
+      <Typography variant="h5" alignSelf={"center"}>
+        Hola {user?.fullName} Este es un resumen que tenemos para ti
+      </Typography>
+      )}
+      <LogoutButton />
       <Box
           sx={{
             maxWidth: '4xl',
@@ -128,12 +121,12 @@ const MainView = () => {
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                {speedometerMessage.showIcon && <WarningIcon sx={{ color: speedometerMessage.color, fontSize: '2rem' }} />}
+                {speedometerMessage.showIcon && <WarningIcon sx={{ color: speedometerMessage?.color, fontSize: '2rem' }} />}
               <Typography
                 variant="h3"
                 sx={{
                   fontWeight: 700,
-                  color: speedometerMessage.color,
+                  color: speedometerMessage?.color,
                   fontSize: '2.25rem'
                 }}
               >
@@ -144,7 +137,7 @@ const MainView = () => {
           <Typography
             variant="subtitle1"
             sx={{
-              color: speedometerMessage.color,
+              color: speedometerMessage?.color,
               mt: 1,
             }}
           >
@@ -155,7 +148,6 @@ const MainView = () => {
       <Box sx={{ my: 2, display: "flex", justifyContent: "flex-end" }}>
         <Button
           variant="contained"
-          color="primary"
           onClick={handleSendSelected}
           disabled={!selectedTransactions?.length}
           startIcon={<ReceiptIcon />}

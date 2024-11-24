@@ -59,7 +59,7 @@ export default function ActivitySelector({ selectedActivity, onActivitySelect, o
               }}
             >
               <BusinessIcon
-                sx={{ fontSize: 36, color: "primary.main" }}
+                sx={{ fontSize: 36, color: "primary" }}
               />
             </Box>
           </Box>

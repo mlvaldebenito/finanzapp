@@ -44,7 +44,7 @@ class SantanderScraper:
         )
         json_response = response.json()
         # Handle potential errors in the response
-        if response.status_code != 200 or json_response['message'] == 'Usuario o contraseña incorrectos':
+        if response.status_code != 200:
             raise Exception(
                 f"Error fetching tokens: {response.status_code}, {response.text}"
             )
@@ -101,9 +101,10 @@ class SantanderScraper:
             headers=headers,
             json=json_data,
         )
-        data_response = response.json()['DATA']['OUTPUT']
-        scalars = data_response['ESCALARES']
+        data_response = response.json()["DATA"]["OUTPUT"]
+        scalars = data_response["ESCALARES"]
         full_name = f"{scalars['NOMBREPERSONA']} {scalars['APELLIDOPATERNO']} {scalars['APELLIDOMATERNO']}"
+        full_name = "".join([name.capitalize() for name in full_name.split()])
         return data_response["MATRICES"]["MATRIZCAPTACIONES"]["e1"], full_name
 
     @classmethod
@@ -145,10 +146,13 @@ class SantanderScraper:
     @classmethod
     def parse_movements(cls, json_response: dict, account_number, user, full_name):
         bank_account, _ = BankAccount.objects.get_or_create(
-            account_number=account_number, bank="Santander", user=user, full_name=full_name,
+            account_number=account_number,
+            bank="Santander",
+            user=user,
+            full_name=full_name,
         )
         if not json_response.get("movements"):
-            return
+            return []
         return [
             BankMovement(
                 accounting_date=mov["accountingDate"],
@@ -181,12 +185,15 @@ class SantanderClient:
         to_create = []
         user = banking_credentials.user
         for account_detail in client_accounts:
-            print(account_detail)
             account_number = (
                 f"{account_detail['OFICINACONTRATO']}{account_detail['NUMEROCONTRATO']}"
             )
             response = SantanderScraper.fetch_bank_movements(
                 access_token, account_number
             )
-            to_create += SantanderScraper.parse_movements(response, account_number, user, full_name)
+            print("response 1")
+            to_create += SantanderScraper.parse_movements(
+                response, account_number, user, full_name
+            )
+            print("response 2")
         BankMovement.objects.bulk_create(to_create, ignore_conflicts=True)

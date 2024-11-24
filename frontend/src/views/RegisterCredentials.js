@@ -40,7 +40,6 @@ const RegisterCredentials = () => {
     onError: () => {
       addAlert({
         message: 'Error Ingresando Credenciales del Banco',
-        color: 'error',
         show: true,
         timeout: 1000,
       });
@@ -142,6 +141,7 @@ const RegisterCredentials = () => {
                   sx={{
                     mt: 1,
                     py: 1.5,
+                    color: 'text.secondary',
                     background: 'linear-gradient(145deg, #2196f3, #1976d2)',
                     '&:hover': {
                       background: 'linear-gradient(145deg, #1976d2, #1565c0)',

@@ -107,6 +107,7 @@ export const GET_USER = gql`
       id
       username
       hasBankCredentials
+      fullName
     }
   }
 `;
