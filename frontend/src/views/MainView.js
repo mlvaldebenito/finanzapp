@@ -17,7 +17,6 @@ import ChatInterface from '../components/chatInterface';
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
   const user = useGetUser();
-  console.log(user)
 
   // Query for all bank movements
   const { data, loading: allBankMovementsLoading } = useQuery(GET_ALL_BANK_MOVEMENTS, {
