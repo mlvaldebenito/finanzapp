@@ -22,8 +22,10 @@ import { REGISTER_BANK_CREDENTIALS } from '../graphql/mutations';
 import { useMutation } from '@apollo/client';
 import { prettifyRut, removeSeparators } from 'react-rut-formatter';
 import { useNavigate } from 'react-router-dom';
+import useSnackBars from '../hooks/useSnackBar';
 
 const RegisterCredentials = () => {
+  const { addAlert } = useSnackBars();
   const [rut, setRut] = useState({ formatted: '', raw: '', valid: false });
   const [password, setPassword] = useState('')
   const navigate = useNavigate();
@@ -35,6 +37,14 @@ const RegisterCredentials = () => {
     },
     refetchQueries: [GET_USER],
     onCompleted: () => navigate('/main'),
+    onError: () => {
+      addAlert({
+        message: 'Formulario Ingresado Correctamente',
+        severity: 'success',
+        show: true,
+        timeout: 10000,
+      });
+    } 
   })
 
   const handleRutChange = (
