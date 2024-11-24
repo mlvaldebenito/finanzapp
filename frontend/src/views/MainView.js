@@ -12,7 +12,8 @@ import TermometerLoader from '../components/termometerLoader';
 import LogoutButton from '../components/LogoutButton';
 import useGetUser from '../hooks/useGetUser';
 import ChatInterface from '../components/chatInterface';
-
+import Stack from '@mui/material/Stack';
+import ImageDialog from '../dialog/ImagesDialog';
 
 const MainView = () => {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
@@ -20,10 +21,10 @@ const MainView = () => {
 
   // Query for all bank movements
   const { data, loading: allBankMovementsLoading } = useQuery(GET_ALL_BANK_MOVEMENTS, {
-    // variables: {
-    //   startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10), // 30 days ago
-    //   endDate: new Date().toISOString().slice(0, 10) // today
-    // }
+    variables: {
+      startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10), // 30 days ago
+      endDate: new Date().toISOString().slice(0, 10) // today
+    }
   });
 
   const { data: distinctRutsData } = useQuery(GET_DISTINCT_RUTS_COUNT, {
@@ -146,6 +147,8 @@ const MainView = () => {
         </Box>
       </Box>
       <Box sx={{ my: 2, display: "flex", justifyContent: "flex-end" }}>
+        <Stack direction="row" spacing={1}>
+        <ImageDialog />
         <Button
           variant="contained"
           onClick={handleSendSelected}
@@ -163,6 +166,7 @@ const MainView = () => {
         >
           Emitir Boleta ({selectedTransactions?.length || ""})
         </Button>
+        </Stack>
       </Box>
       <Paper
         elevation={0}

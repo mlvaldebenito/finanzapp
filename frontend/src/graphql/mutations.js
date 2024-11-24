@@ -56,3 +56,13 @@ export const ASK_ACTIVITY_GUIDANCE = gql`
     }
   }
 `;
+
+export const UPLOAD_SALES_FILE = gql`
+  mutation UploadFile($file: Upload!) {
+    uploadFile(file: $file) {
+      success
+      message
+      url
+    }
+  }
+`;

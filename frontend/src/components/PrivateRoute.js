@@ -4,7 +4,6 @@ import useIsLogged from  '../hooks/useIsLogged'; // Import the useIsLogged hook
 
 const PrivateRoute = ({ children }) => {
   const isLogged = useIsLogged(); // Check if the user is logged in
-
   return isLogged ? children : <Navigate to="/login" replace />;
 };
 

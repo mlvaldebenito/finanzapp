@@ -6,6 +6,7 @@ import Login from './views/Login';
 import PrivateRoute from './components/PrivateRoute'; // Protect routes
 import PublicRoute from './components/PublicRoute'; // Redirect logged-in users
 import RegisterCredentials from './views/RegisterCredentials';
+import CredentialRoute from './components/CredentialsRoute';
 
 
 function AppRoutes() {
@@ -42,9 +43,9 @@ function AppRoutes() {
           <Route
             path="/register-credentials"
             element={
-              <PrivateRoute>
-                <RegisterCredentials />
-                </PrivateRoute>
+              <CredentialRoute>
+              <RegisterCredentials />
+              </CredentialRoute>
               }
           />
         </Routes>
