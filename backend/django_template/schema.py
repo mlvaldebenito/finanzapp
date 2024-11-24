@@ -7,6 +7,8 @@ from apps.bank_scraper import SantanderClient
 from apps.integrations.bedrock_chat_sii_rubro import BedRockLLM
 from django_template.middleware import get_user
 from apps.helpers.read_guidline import ReadGuidance
+from graphene_file_upload.scalars import Upload
+
 
 # Import types and models for your queries
 from apps.app_schema.types import (
@@ -62,7 +64,19 @@ class RegisterUser(graphene.Mutation):
     def mutate(self, info, email, password):
         user = User.objects.create_user(username=email, email=email, password=password)
         return RegisterUser(user=user)
-    
+
+
+class UploadFile(graphene.Mutation):
+    class Arguments:
+        file = Upload(required=True)
+
+    success = graphene.Boolean()
+
+    def mutate(self, info, file):
+        print(type(file))
+        print(file)
+        return UploadFile(success=True)
+
 
 class AskActivityGuidance(graphene.Mutation):
     activity = graphene.String()
@@ -123,6 +137,7 @@ class Mutation(graphene.ObjectType):
     register_bank_credentials = RegisterBankCredentials.Field()
 
     ask_activity_guidance = AskActivityGuidance.Field()
+    upload_file = UploadFile.Field()
 
 # Define Query class for existing queries
 
@@ -159,6 +174,12 @@ class Query(graphene.ObjectType):
     # Queries for ProcessedServiceListingType
     all_processed_service_listing = graphene.List(ProcessedServiceListingType)
     processed_service_listing = graphene.Field(ProcessedServiceListingType, id=graphene.Int())
+    recommedation_of_movements = graphene.List(
+        BankMovementType,
+        start_date=graphene.Date(),
+        end_date=graphene.Date(),
+    )
+
 
     # Resolvers for BankMovement
     def resolve_all_bank_movements(
@@ -250,6 +271,19 @@ class Query(graphene.ObjectType):
         except ProcessedServiceListing.DoesNotExist:
             return None
 
+    def resolve_recommedation_of_movements(root, info, start_date=None, end_date=None):
+        auth_user = get_user(info.context)
+        if auth_user.is_anonymous:
+            return BankMovement.objects.none()
+        processed_services_amounts = ProcessedServiceListing.objects.filter(
+            user=auth_user
+        ).values_list('amount', flat=True)
+        queryset = BankMovement.objects.filter(amount__in=processed_services_amounts)
+        if start_date:
+            queryset = queryset.filter(accounting_date__gte=start_date)
+        if end_date:
+            queryset = queryset.filter(accounting_date__lte=end_date)
+        return queryset
 
 # Combine Query and Mutation into a single schema
 schema = graphene.Schema(query=Query, mutation=Mutation)

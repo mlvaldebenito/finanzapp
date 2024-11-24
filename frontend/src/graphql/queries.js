@@ -111,3 +111,11 @@ export const GET_USER = gql`
     }
   }
 `;
+
+export const GET_BANK_MOVEMENT_RECOMMENDATIONS = gql`
+  query getRecommedationOfMovements {
+    recommedationOfMovements {
+      id
+    }
+  }
+`;

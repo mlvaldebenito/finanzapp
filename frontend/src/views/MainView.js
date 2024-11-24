@@ -4,7 +4,6 @@ import TransactionTable from '../components/TransactionTable';
 import MetricsCard from '../components/MetricsCard';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import SpeedometerGauge from '../components/speedometerGauge';
-import WarningIcon from '@mui/icons-material/Warning';
 import getSpeedometerMessage from '../helpers/speedometerMessages';
 import { useQuery } from '@apollo/client';
 import { GET_ALL_BANK_MOVEMENTS, GET_DISTINCT_RUTS_COUNT } from '../graphql/queries';
@@ -28,40 +27,41 @@ const MainView = () => {
 
   const { data: distinctRutsData } = useQuery(GET_DISTINCT_RUTS_COUNT, {
     variables: {
-      startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10), // 30 days ago
-      endDate: new Date().toISOString().slice(0, 10) // today
-    }
+      startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .slice(0, 10), // 30 days ago
+      endDate: new Date().toISOString().slice(0, 10), // today
+    },
   });
 
   const { data: sixMonthsDistinctRuts } = useQuery(GET_DISTINCT_RUTS_COUNT, {
     variables: {
-      startDate: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10), // 6 months ago
-      endDate: new Date().toISOString().slice(0, 10) // today
-    }
+      startDate: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .slice(0, 10), // 6 months ago
+      endDate: new Date().toISOString().slice(0, 10), // today
+    },
   });
 
-  console.log("DISTINCT RUTS DATA: ", distinctRutsData);
-  console.log("SIX MONTHS DISTINCT RUTS DATA: ", sixMonthsDistinctRuts);
   const transactions = data?.allBankMovements || [];
-  const incomeTransactions = transactions.filter((mov) => mov.amount > 0);
 
   // Calculate metrics
-  const totalTransactions = transactions?.length || "";
-  const totalAmount = transactions?.length
-    ? transactions?.reduce((sum, t) => sum + t.amount, 0)
-    : 0;
-  const avgTicketProbability = transactions?.length
-    ? transactions.reduce((sum, t) => sum + (t.ticketProbability || 0), 0) /
-      totalTransactions
-    : 0;
+  const totalTransactions = transactions?.length || 0;
+  const totalAmount = transactions?.reduce((sum, t) => sum + t.amount, 0) || 0;
+  const avgTicketProbability =
+    transactions.length > 0
+      ? transactions.reduce((sum, t) => sum + (t.ticketProbability || 0), 0) /
+        transactions.length
+      : 0;
 
-  const speedometerMessage = getSpeedometerMessage(
-    incomeTransactions?.length ?? 0
+  const speedometerMessages = getSpeedometerMessage(
+    distinctRutsData?.distinctRutsCount ?? 0
   );
+  console.log(sixMonthsDistinctRuts);
 
   // Add handler function
   const handleSendSelected = () => {
-    if (!selectedTransactions?.length) {
+    if (!selectedTransactions.length) {
       alert("Please select transactions to send");
       return;
     }
@@ -88,70 +88,88 @@ const MainView = () => {
         backdropFilter: "blur(8px)",
         border: "1px solid rgba(255, 255, 255, 0.1)",
       }}
-    >{user === undefined ? <Skeleton height={40} /> : (
-      <Typography variant="h5" alignSelf={"center"}>
-        Hola {user?.fullName} Este es un resumen que tenemos para ti
-      </Typography>
-      )}
+    >
       <LogoutButton />
-      <Box
-          sx={{
-            maxWidth: '4xl',
-            mx: 'auto',
-            bgcolor: '#ffffff', //f1f5f9
-            borderRadius: '16px',
-            p: 4,
-            pt: 0,
-            backdropFilter: 'blur(16px)',
-            border: '0px solid',
-            borderColor: 'grey.800',
-          }}
-        >
-          <SpeedometerGauge value={distinctRutsData?.distinctRutsCount ?? 0} maxValue={50} />
-          <Box sx={{ textAlign: 'center', mt: 3 }}>
-            <Typography 
-              variant="h6" 
-              sx={{ 
-                color: '#475569',
-                fontSize: '1.125rem'  
+      {user === undefined ? (
+        <Skeleton height={40} />
+      ) : (
+        <>
+          <Typography variant="h5" fontSize="1.6rem" align="center" gutterBottom sx={{
+            mb: 2
+          }}>
+            Resumen de ingresos de {user?.fullName}
+          </Typography>
+
+          <Grid container spacing={1} sx={{ padding: 0, margin: 0 }}>
+          <Grid item xs={12} md={6} sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+          }}>
+              <Stack spacing={4}>
+                {speedometerMessages?.messages.map((message, index) => (
+                  <Stack
+                    key={index}
+                    direction="row"
+                    textAlign="start"
+                    spacing={1}
+                  >
+                    {speedometerMessages && (
+                      <speedometerMessages.icon
+                        sx={{
+                          color: speedometerMessages.color,
+                          fontSize: "1.4rem",
+                          mb: 1,
+                        }}
+                      />
+                    )}
+                    <Typography
+                      sx={{
+                        color: speedometerMessages.color,
+                        fontSize: "1.4rem",
+                      }}
+                    >
+                      {speedometerMessages.messages[index]}
+                    </Typography>
+                  </Stack>
+                ))}
+              </Stack>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              {/* TODO: Add logic for calculating transactions when queries are ready */}
-              Ingresos de transferencias de personas distintas: {distinctRutsData?.distinctRutsCount ?? 0}
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
-              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                {speedometerMessage.showIcon && <WarningIcon sx={{ color: speedometerMessage?.color, fontSize: '2rem' }} />}
-              <Typography
-                variant="h3"
-                sx={{
-                  fontWeight: 700,
-                  color: speedometerMessage?.color,
-                  fontSize: '2.25rem'
-                }}
-              >
-                {speedometerMessage.message}
-              </Typography>
-            </Box>
-          </Box>
-          <Typography
-            variant="subtitle1"
-            sx={{
-              color: speedometerMessage?.color,
-              mt: 1,
-            }}
-          >
-            {speedometerMessage.subMessage}
-          </Typography>
-        </Box>
-      </Box>
+              <Box textAlign="center">
+                <SpeedometerGauge
+                  value={distinctRutsData?.distinctRutsCount ?? 0}
+                  maxValue={50}
+                />
+                <Typography
+                  variant="h6"
+                  sx={{ color: "#475569", fontSize: "1.125rem", mt: 2 }}
+                >
+                  Ingresos de transferencias de personas distintas:{" "}
+                  {distinctRutsData?.distinctRutsCount ?? 0}
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </>
+      )}
+
       <Box sx={{ my: 2, display: "flex", justifyContent: "flex-end" }}>
         <Stack direction="row" spacing={1}>
         <ImageDialog />
         <Button
           variant="contained"
           onClick={handleSendSelected}
-          disabled={!selectedTransactions?.length}
+          disabled={!selectedTransactions.length}
           startIcon={<ReceiptIcon />}
           sx={{
             fontFamily: "'Inter', sans-serif",
@@ -170,7 +188,6 @@ const MainView = () => {
       <Paper
         elevation={0}
         sx={{
-          // height: '100%',
           width: "100%",
           overflow: "hidden",
           background: "linear-gradient(145deg, #ffffff, #f8fafc)",
@@ -185,36 +202,13 @@ const MainView = () => {
           onSelectionChange={setSelectedTransactions}
           />
       </Paper>
-      <Grid
-        container
-        spacing={3}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          p: { xs: 2, sm: 3 },
-          mb: 4,
-          borderRadius: "16px",
-          background: "linear-gradient(145deg, #3b82f6, #f8fafc)",
-          boxShadow: "0 4px 24px rgba(0, 0, 0, 0.04)",
-          backdropFilter: "blur(8px)",
-          width: "100%",
-          margin: 0,
-          "& .MuiGrid-item": {
-            pt: { xs: "2", md: "0 !important" },
-          },
-        }}
-      >
+
+      <Grid container spacing={3} sx={{ mt: 4 }}>
         <Grid item xs={12} sm={6} md={4}>
           <MetricsCard
             title="Transacciones último mes"
             value={totalTransactions}
             color="#3b82f6"
-            subtitle={<Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant="caption" sx={{ color: '#10b981', fontSize: '0.7rem', fontWeight: 600 }}>
-                Estas a {50 - distinctRutsData?.getDistinctRutsCount} transacciones de ser tributado.
-              </Typography>
-            </Box>}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
@@ -235,6 +229,7 @@ const MainView = () => {
           />
         </Grid>
       </Grid>
+
       <Box sx={{ my: 4 }}>
         <ChatInterface />
       </Box>

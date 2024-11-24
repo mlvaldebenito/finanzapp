@@ -23,12 +23,14 @@ import { useMutation } from '@apollo/client';
 import { prettifyRut, removeSeparators } from 'react-rut-formatter';
 import { useNavigate } from 'react-router-dom';
 import useSnackBars from '../hooks/useSnackBar';
+import useGetUser from '../hooks/useGetUser';
 
 const RegisterCredentials = () => {
   const { addAlert } = useSnackBars();
   const [rut, setRut] = useState({ formatted: '', raw: '', valid: false });
   const [password, setPassword] = useState('')
   const navigate = useNavigate();
+  const user = useGetUser();
 
 
   const [handleSubmit, {loading}] = useMutation(REGISTER_BANK_CREDENTIALS, {
@@ -54,14 +56,14 @@ const RegisterCredentials = () => {
       const displayRut = formattedRut !== '0-0' ? formattedRut : '';
       setRut({ formatted: displayRut, raw: cleanedRut });
     });
-
+    
+  user && user.bankCredentials && navigate('/main');
   return (
     <Box
       sx={{
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
-        background: 'linear-gradient(145deg, #f1f5f9, #e2e8f0)',
         py: 4,
       }}
     >
