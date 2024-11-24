@@ -7,6 +7,9 @@ const theme = createTheme({
       main: '#1976d2', // A clean blue for primary actions
       dark: '#004ba0', // A darker blue for hover states
     },
+    warning: {
+      main: '#ff9800', // Orange for warnings
+    },
     background: {
       default: '#ffffff', // Light gray background for the main app
       paper: '#ffffff', // Another light gray background for the paper component
